@@ -4,10 +4,10 @@ plugins {
 	id 'java'
 	id 'jacoco'
 }
-jacocoTestReport{
+jacocoTestReport {
 	reports {
-		csv.enabled=true
-		xml.enabled=true
+		csv.enabled true
+		xml.enabled true
 	}
 }
 
@@ -36,6 +36,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 }
 
 tasks.named('test') {

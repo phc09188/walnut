@@ -10,17 +10,14 @@ jacocoTestReport {
 		xml.enabled true
 	}
 }
-
 group = 'com.shopper.walnut'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
-
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
 }
-
 repositories {
 	mavenCentral()
 }
@@ -31,13 +28,17 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
+	//mysql
 	runtimeOnly 'mysql:mysql-connector-java'
+	//lombok
 	annotationProcessor 'org.projectlombok:lombok'
+	//Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	//SMTP
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-
+	//ThymLeaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 }

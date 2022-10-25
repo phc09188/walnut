@@ -1,5 +1,7 @@
 package com.shopper.walnut.walnut.config;
 
+import com.shopper.walnut.walnut.service.UserSignUpService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -7,19 +9,31 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
+@RequiredArgsConstructor
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+    private final UserSignUpService service;
     @Override
     public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/favicon.ico","/brand/**", "/Users/chandle/Downloads/walnut/src/main/resources/static/brand/**");
+
         super.configure(web);
+    }
+    @Bean
+    PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
     @Bean
     UserAuthenticationFailureHandler getFailureHandler() {
         return new UserAuthenticationFailureHandler();
     }
+
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -29,9 +43,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(
                         "/"
-                        , "/member/register"
-                        , "/member/email-auth"
-                        , "/member/find-password"
+                        , "/user/register"
+                        , "/user/email-auth"
+                        , "/user/find-password"
                 )
                 .permitAll();
         http.authorizeRequests()
@@ -41,13 +55,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/brand/**")
                 .hasAuthority("ROLE_BRAND");
         http.formLogin()
-                .loginPage("/member/login")
+                .loginPage("/user/login")
                 .failureHandler(getFailureHandler())
                 .successHandler(new LogAuthenticationSuccess())
                 .permitAll();
 
         http.logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
+                .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true);
 
@@ -61,6 +75,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
+        auth.userDetailsService(service).passwordEncoder(getPasswordEncoder());
         super.configure(auth);
     }
 

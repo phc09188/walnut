@@ -1,7 +1,6 @@
 package com.shopper.walnut.walnut.model.entity;
 
 
-import com.shopper.walnut.walnut.converter.BooleanToYNConverter;
 import com.shopper.walnut.walnut.model.input.UserStatus;
 import lombok.*;
 

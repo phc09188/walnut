@@ -8,35 +8,39 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.time.LocalDate;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Controller
 public class UserController {
     private final UserSignUpService signUpService;
 
-    @RequestMapping("/member/login")
+    @RequestMapping("/user/login")
     public String login(){
-        return "member/login";
+        return "user/login";
     }
 
-    @GetMapping("/member/register")
+    @GetMapping("/user/register")
     public String register() {
 
-        return "member/register";
+        return "user/register";
     }
 
-    @PostMapping("/member/register")
+    @PostMapping("/user/register")
     public String registerSubmit(Model model, HttpServletRequest request
             , UserInput parameter) {
 
         boolean result = signUpService.register(parameter);
         model.addAttribute("result", result);
 
-        return "member/register_complete";
+        return "user/register_complete";
     }
-    @GetMapping("/member/email-auth")
+    @GetMapping("/user/email-auth")
     public String emailAuth(Model model, HttpServletRequest request) {
 
         String uuid = request.getParameter("id");
@@ -45,6 +49,9 @@ public class UserController {
         boolean result = signUpService.emailAuth(uuid);
         model.addAttribute("result", result);
 
-        return "member/email_auth";
+        return "user/email_auth";
     }
+
+
+
 }

@@ -15,11 +15,16 @@ public class BrandDto {
     private int brandId;
     private String brandName;
     private String brandPhone;
+    private String brandLoginId;
+    private String brandPassword;
     private LocalDateTime brandRegDt;
     private LocalDateTime brandOkDt;
     private String brandStatus;
     private String fileName;
     private String urlFileName;
+    private String zipCode;
+    private String streetAdr;
+    private String detailAdr;
 
 
     public static BrandDto of(Brand brand) {

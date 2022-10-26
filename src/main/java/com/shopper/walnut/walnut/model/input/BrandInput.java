@@ -13,9 +13,14 @@ public class BrandInput {
     private Integer brandId;
     private String brandName;
     private String brandPhone;
+    private String brandLoginId;
+    private String brandPassword;
     private LocalDateTime brandRegDt;
     private LocalDateTime brandOkDt;
     private String brandStatus;
+    private String zipCode;
+    private String streetAdr;
+    private String detailAdr;
 
     String fileName;
     String urlFileName;

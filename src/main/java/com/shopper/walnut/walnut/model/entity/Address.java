@@ -14,7 +14,6 @@ public class Address {
     private String detailAdr;
     protected Address(){
     }
-
     public Address(String zipCode, String streetAdr, String detailAdr) {
         this.zipCode = zipCode;
         this.streetAdr = streetAdr;

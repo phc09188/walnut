@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,42 +27,17 @@ import java.util.UUID;
 public class BrandController {
     private final BrandSignUpService signUpService;
     private final BrandService service;
-//    @GetMapping(value = {"/brand/add.do", "/brand/edit.do"})
-//    public String add(Model model, HttpServletRequest request, BrandInput parameter) {
-//        BrandDto details = new BrandDto();
-//        model.addAttribute("detail",details );
-//        return "brand/add";
-//    }
 
-    @GetMapping(value = {"/brand/add.do", "/brand/edit.do"})
-    public String add(Model model, HttpServletRequest request
-            , BrandInput parameter) {
-
-
-        boolean editMode = request.getRequestURI().contains("/edit.do");
-        BrandDto detail = new BrandDto();
-
-        if (editMode) {
-            int id = parameter.getBrandId();
-            BrandDto existCourse = signUpService.getById(id);
-            if (existCourse == null) {
-                // error 처리
-                model.addAttribute("message", "강좌정보가 존재하지 않습니다.");
-                return "common/error";
-            }
-            detail = existCourse;
-        }
-
-        model.addAttribute("editMode", editMode);
-        model.addAttribute("detail", detail);
-
+    @GetMapping("/brand/register")
+    public String add(Model model) {
+        model.addAttribute("brandForm",new BrandDto());
         return "brand/add";
     }
 
-    @PostMapping(value = {"/brand/add.do", "/brand/edit.do"})
+    @PostMapping("/brand/register.do")
     public String addSubmit(Model model, HttpServletRequest request
             , MultipartFile file
-            , BrandInput parameter) {
+            , @Validated BrandInput parameter) {
 
         String saveFilename = "";
         String urlFilename = "";
@@ -89,21 +65,8 @@ public class BrandController {
         parameter.setFileName(saveFilename);
         parameter.setUrlFileName(urlFilename);
 
-        boolean editMode = request.getRequestURI().contains("/edit.do");
 
-        if (editMode) {
-            int id = parameter.getBrandId();
-            BrandDto existCourse = signUpService.getById(id);
-            if (existCourse == null) {
-                // error 처리
-                model.addAttribute("message", "브랜드 정보가 존재하지 않습니다.");
-                return "common/error";
-            }
-
-            boolean result = service.set(parameter);
-        } else {
-            boolean result = signUpService.register(parameter);
-        }
+        boolean result = signUpService.register(parameter);
         return "redirect:/";
     }
     private String[] getNewSaveFile(String baseLocalPath, String baseUrlPath, String originalFilename) {

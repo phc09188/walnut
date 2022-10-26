@@ -1,6 +1,7 @@
 package com.shopper.walnut.walnut.model.entity;
 
 
+import com.shopper.walnut.walnut.model.input.UserClassification;
 import com.shopper.walnut.walnut.model.input.UserStatus;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "user")
-public class User implements UserStatus {
+public class User implements UserStatus, UserClassification {
     @Id
     private String userId;
     private String userName;
@@ -26,12 +27,13 @@ public class User implements UserStatus {
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean emailAuthYn;
     private String emailAuthKey;
+
     private String userStatus;
+    private String userClassification;
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean marketingYn;
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean privateYn;
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean payYn;
-
 }

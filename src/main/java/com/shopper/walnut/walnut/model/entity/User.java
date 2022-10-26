@@ -18,7 +18,8 @@ public class User implements UserStatus {
     private String userName;
     private String userEmail;
     private String userPassword;
-    private String userRegistration;
+    @Embedded
+    private Address address;
     private String userPhone;
     private LocalDate userRegDt;
 //    @Convert(converter = BooleanToYNConverter.class)
@@ -26,5 +27,11 @@ public class User implements UserStatus {
     private boolean emailAuthYn;
     private String emailAuthKey;
     private String userStatus;
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private boolean marketingYn;
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private boolean privateYn;
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private boolean payYn;
 
 }

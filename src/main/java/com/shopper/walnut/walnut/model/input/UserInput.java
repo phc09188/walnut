@@ -14,7 +14,9 @@ public class UserInput {
     String userName;
     String userEmail;
     String userPassword;
-    String userRegistration;
+    String zipCode;
+    String streetAdr;
+    String detailAdr;
     String userPhone;
     boolean marketingYn;
     boolean privateYn;

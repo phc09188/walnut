@@ -19,7 +19,7 @@ public class UserAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
         }
         setUseForward(true);
         //url 변경
-        setDefaultFailureUrl("/member/login?error=true");
+        setDefaultFailureUrl("/user/login?error=true");
         request.setAttribute("errorMessage", msg);
 
         System.out.println("로그인에 실패하였습니다.");

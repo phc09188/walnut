@@ -1,5 +1,6 @@
 package com.shopper.walnut.walnut.controller;
 
+import com.shopper.walnut.walnut.model.input.UserClassification;
 import com.shopper.walnut.walnut.model.input.UserInput;
 import com.shopper.walnut.walnut.service.UserSignUpService;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class UserController {
     @PostMapping("/user/register/write")
     public String registerSubmit(@Validated UserInput parameter) {
 
-        boolean result = signUpService.register(parameter);
+        boolean result = signUpService.register(parameter, true);
 
         return "redirect:/";
     }

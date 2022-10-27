@@ -53,8 +53,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**")
                 .hasAuthority("ROLE_ADMIN");
         http.authorizeRequests()
-                .antMatchers("/brand/**")
-                .hasAuthority("ROLE_BRAND");
+                .antMatchers("/brand/main/**")
+                .hasAuthority("ROLE_SELLER");
         http.formLogin()
                 .loginPage("/user/login")
                 .failureHandler(getFailureHandler())

@@ -9,5 +9,4 @@ public interface ItemStatus {
      * 재고 소진
      */
     String MEMBER_STATUS_ING = "STOP";
-
 }

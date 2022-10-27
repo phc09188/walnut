@@ -4,8 +4,10 @@ import com.shopper.walnut.walnut.conponents.MailComponents;
 import com.shopper.walnut.walnut.exception.UserRegisterException;
 import com.shopper.walnut.walnut.exception.error.ErrorCode;
 import com.shopper.walnut.walnut.model.entity.Address;
+import com.shopper.walnut.walnut.model.input.UserClassification;
 import com.shopper.walnut.walnut.model.input.UserInput;
 import com.shopper.walnut.walnut.model.entity.User;
+import com.shopper.walnut.walnut.model.input.UserStatus;
 import com.shopper.walnut.walnut.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,7 +30,7 @@ public class UserSignUpService implements UserDetailsService {
     private final UserRepository userRepository;
     private final MailComponents mailComponents;
 
-    public boolean register(UserInput parameter){
+    public boolean register(UserInput parameter, boolean isNormalUser){
         //해당 아이디의 유저가 존재하는지 확인
         Optional<User> optionalUserA = userRepository.findById(parameter.getUserId());
         Optional<User> optionalUserB = userRepository.findByUserEmail(parameter.getUserEmail());
@@ -49,11 +51,17 @@ public class UserSignUpService implements UserDetailsService {
                 .userPhone(parameter.getUserPhone())
                 .userRegDt(LocalDate.now())
                 .emailAuthKey(uuid)
-                .userStatus(User.MEMBER_STATUS_REQ)
                 .marketingYn(parameter.isMarketingYn())
                 .privateYn(parameter.isPrivateYn())
                 .payYn(parameter.isPayYn())
                 .build();
+        if(isNormalUser) {
+            user.setUserStatus(User.MEMBER_STATUS_REQ);
+            user.setUserClassification(UserClassification.USER);
+        } else{
+            user.setUserClassification(UserClassification.SELLER);
+            user.setUserStatus(UserStatus.MEMBER_STATUS_ING);
+        }
         userRepository.save(user);
 
         String email = parameter.getUserEmail();
@@ -92,24 +100,15 @@ public class UserSignUpService implements UserDetailsService {
 
         User user = optionalMember.get();
 
-//        if (User.MEMBER_STATUS_REQ.equals(user.getUserStatus())) {
-//            throw new MemberNotEmailAuthException("이메일 활성화 이후에 로그인을 해주세요.");
-//        }
-
-//        if (User.MEMBER_STATUS_STOP.equals(user.getUserStatus())) {
-//            throw new MemberStopUserException("정지된 회원 입니다.");
-//        }
-//
-//        if (User.MEMBER_STATUS_WITHDRAW.equals(user.getUserStatus())) {
-//            throw new MemberStopUserException("탈퇴된 회원 입니다.");
-//        }
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-
-//        if (user.isAdminYn()) {
-//            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-//        }
+        if(user.getUserClassification() == UserClassification.SELLER){
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_SELLER"));
+        }
+        if(user.getUserClassification() == UserClassification.ADMIN){
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }
 
         return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getUserPassword(), grantedAuthorities);
     }

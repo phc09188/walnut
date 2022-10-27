@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Setter
@@ -33,8 +35,23 @@ public class BrandDto {
                 .brandName(brand.getBrandName())
                 .brandPhone(brand.getBrandPhone())
                 .brandRegDt(brand.getBrandRegDt())
+                .zipCode(brand.getAddress().getZipCode())
+                .streetAdr(brand.getAddress().getStreetAdr())
+                .detailAdr(brand.getAddress().getDetailAdr())
+                .urlFileName(brand.getUrlFileName())
                 .brandOkDt(brand.getBrandOkDt())
                 .brandStatus(brand.getBrandStatus())
                 .build();
+    }
+
+    public static List<BrandDto> of(List<Brand> allBrand) {
+        if(allBrand != null){
+            List<BrandDto> brandDtoList = new ArrayList<>();
+            for(Brand x : allBrand){
+                brandDtoList.add(of(x));
+            }
+            return brandDtoList;
+        }
+        return null;
     }
 }

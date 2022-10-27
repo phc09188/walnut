@@ -26,7 +26,6 @@ import java.util.UUID;
 @Controller
 public class BrandController {
     private final BrandSignUpService signUpService;
-    private final BrandService service;
 
     @GetMapping("/brand/register")
     public String add(Model model) {
@@ -66,9 +65,14 @@ public class BrandController {
         parameter.setUrlFileName(urlFilename);
 
 
-        boolean result = signUpService.register(parameter);
+        signUpService.register(parameter);
         return "redirect:/";
     }
+    @GetMapping("/brand/main/test")
+    public String test(){
+        return "brand/main/test";
+    }
+
     private String[] getNewSaveFile(String baseLocalPath, String baseUrlPath, String originalFilename) {
 
         LocalDate now = LocalDate.now();

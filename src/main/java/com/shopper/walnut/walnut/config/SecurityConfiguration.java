@@ -1,5 +1,6 @@
 package com.shopper.walnut.walnut.config;
 
+import com.shopper.walnut.walnut.service.BrandSignUpService;
 import com.shopper.walnut.walnut.service.UserSignUpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,10 +18,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    private final UserSignUpService service;
+    private final UserSignUpService userService;
+    private final BrandSignUpService brandService;
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/favicon.ico","/brand/**", "/Users/chandle/Downloads/walnut/src/main/resources/static/brand/**");
+        web.ignoring().antMatchers("/favicon.ico", "/Users/chandle/Downloads/walnut/src/main/resources/static/brand/**");
 
         super.configure(web);
     }
@@ -47,6 +49,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         , "/user/email-auth"
                         , "/user/find-password"
                         , "/user/register/write"
+                        , "/brand/register"
                 )
                 .permitAll();
         http.authorizeRequests()
@@ -54,7 +57,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .hasAuthority("ROLE_ADMIN");
         http.authorizeRequests()
                 .antMatchers("/brand/main/**")
-                .hasAuthority("ROLE_SELLER");
+                .hasAuthority("ROLE_BRAND");
         http.formLogin()
                 .loginPage("/user/login")
                 .failureHandler(getFailureHandler())
@@ -76,9 +79,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-        auth.userDetailsService(service).passwordEncoder(getPasswordEncoder());
+        auth.userDetailsService(userService).passwordEncoder(getPasswordEncoder());
         super.configure(auth);
     }
-
-
 }

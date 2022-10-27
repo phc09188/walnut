@@ -1,8 +1,6 @@
 package com.shopper.walnut.walnut.model.input;
 
 import lombok.*;
-import org.hibernate.type.descriptor.sql.TinyIntTypeDescriptor;
-import org.springframework.stereotype.Service;
 
 @Getter
 @Setter

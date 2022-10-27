@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "user")
-public class User implements UserStatus, UserClassification {
+public class User implements UserStatus {
     @Id
     private String userId;
     private String userName;
@@ -29,11 +29,28 @@ public class User implements UserStatus, UserClassification {
     private String emailAuthKey;
 
     private String userStatus;
-    private String userClassification;
+    private UserClassification userClassification;
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean marketingYn;
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean privateYn;
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean payYn;
+
+    public static User toSign(Brand brand) {
+        return User.builder()
+                .userId(brand.getBrandLoginId())
+                .userName(brand.getBrandName())
+                .userPassword(brand.getBrandPassword())
+                .address(brand.getAddress())
+                .userPhone(brand.getBrandPhone())
+                .userRegDt(LocalDate.now())
+                .emailAuthYn(true)
+                .userStatus(UserStatus.MEMBER_STATUS_ING)
+                .userClassification(UserClassification.SELLER)
+                .marketingYn(true)
+                .privateYn(true)
+                .payYn(true)
+                .build();
+    }
 }

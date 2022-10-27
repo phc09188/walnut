@@ -35,8 +35,7 @@ public class UserController {
 
     @PostMapping("/user/register/write")
     public String registerSubmit(@Validated UserInput parameter) {
-
-        boolean result = signUpService.register(parameter, true);
+        signUpService.register(parameter);
 
         return "redirect:/";
     }
@@ -51,7 +50,4 @@ public class UserController {
 
         return "user/email_auth";
     }
-
-
-
 }

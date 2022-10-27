@@ -18,15 +18,18 @@ class BrandSignUpServiceTest {
         //given
         BrandInput input = BrandInput
                 .builder()
-                .brandName("무신사짭")
+                .brandName("무신사짭2")
                 .brandPhone("01011111111")
+                .brandLoginId("3333")
+                .brandPassword("3333")
+                .zipCode("a")
+                .streetAdr("a")
+                .detailAdr("a")
                 .brandRegDt(LocalDateTime.now())
-                .brandStatus(BrandStatus.MEMBER_STATUS_REQ)
                 .build();
         //when
-        boolean result = service.register(input);
+        service.register(input);
         //then
-        assertTrue(result);
     }
 
 }

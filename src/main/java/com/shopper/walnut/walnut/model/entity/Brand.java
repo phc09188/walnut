@@ -1,6 +1,7 @@
 package com.shopper.walnut.walnut.model.entity;
 
 import com.shopper.walnut.walnut.model.input.BrandStatus;
+import com.shopper.walnut.walnut.model.input.UserClassification;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,6 +24,7 @@ public class Brand implements BrandStatus {
     private LocalDateTime brandRegDt;
     private LocalDateTime brandOkDt;
     private String brandStatus;
+    private UserClassification userClassification;
     @Embedded
     private Address address;
 

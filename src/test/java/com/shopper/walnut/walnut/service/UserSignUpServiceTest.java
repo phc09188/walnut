@@ -33,9 +33,7 @@ class UserSignUpServiceTest {
                 .payYn(true)
                 .build();
         //when
-        boolean result =service.register(userInput);
-        //then
-        assertTrue(result);
+        service.register(userInput);
     }
 
 }

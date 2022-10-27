@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>브랜드 관리</title>
+    <style>
+
+
+        span {
+            text-align: center;
+            padding: 100px;
+        }
+        .buttons{
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<h1>브랜드 리스트 </h1>
+<div th:replace="/fragments/layout.html :: fragment-admin-body-menu"></div>
+</br>
+<div class="buttons">
+    <a href="/admin/brand/approve">승인 요청 관리</a>
+</div>
+</br>
+<div class ="brandList">
+
+    <table class="table">
+        <thread>
+            <tr>
+                <th>브랜드명</th>
+                <th>연락처</th>
+                <th>우편번호</th>
+                <th>주소</th>
+                <th>승인 여부</th>
+                <th>승인 일자</th>
+            </tr>
+        </thread>
+        <tbody>
+            <tr th:each="x : ${brandList}">
+                <td>
+                    <span name="brandName" th:text="${x.brandName}"></span>
+                </td>
+                <td>
+                    <span name="brandPhone" th:text="${x.brandPhone}"></span>
+                </td>
+                <td>
+                    <span name="brandZipCode" th:text="${x.zipCode}"></span>
+                </td>
+                <td>
+                    <span name="brandAddress" th:text="${x.streetAdr} + ${x.detailAdr}"></span>
+                </td>
+                <td>
+                    <p th:if="${x.brandOkDt} != null">승인 완료</p>
+                    <p th:if="${x.brandOkDt} == null">승인 대기 중</p>
+                </td>
+                <td>
+                    <p th:if="${x.brandOkDt} != null" name="brandOkDt" th:value="${x.brandOkDt}">
+                    <p th:if="${x.brandOkDt} == null"> X </p>
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+
+
+</div>
+</body>
+</html>

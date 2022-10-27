@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>브랜드 신청 관리</title>
+</head>
+<body>
+<h1>브랜드 리스트 </h1>
+<div th:replace="/fragments/layout.html :: fragment-admin-body-menu"></div>
+<div class="brandList">
+    <table>
+        <thead>
+            <tr>
+                <th>브랜드명</th>
+                <th>연락처</th>
+                <th>우편번호</th>
+                <th>주소</th>
+                <th>사업자 등록증</th>
+                <th>승인 버튼</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="x : ${list}">
+                <form role="form"  th:object="${x}" th:action="@{/admin/approve/start.do}" method="post">
+                    <input th:value="${x.brandName}" type="hidden" name="brandName"/>
+                    <td>
+                        <span name="brandName" th:text="${x.brandName}"></span>
+                    </td>
+                    <td>
+                        <span name="brandPhone" th:text="${x.brandPhone}"></span>
+                    </td>
+                    <td>
+                        <span name="zipCode" th:text="${x.zipCode}"></span>
+                    </td>
+                    <td>
+                        <span name="address" th:text="${x.streetAdr} + ${x.detailAdr}"></span>
+                    </td>
+                    <td>
+                        <img th:src="${x.urlFileName}">
+                    </td>
+                    <td>
+                        <button type="submit"> 승인</button>
+                    </td>
+                </form>
+            </tr>
+        </tbody>
+    </table>
+
+
+</div>
+</body>
+</html>

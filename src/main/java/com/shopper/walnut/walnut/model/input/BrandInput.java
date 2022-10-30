@@ -22,6 +22,7 @@ public class BrandInput {
     private String streetAdr;
     private String detailAdr;
 
+
     String fileName;
     String urlFileName;
 }

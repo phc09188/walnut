@@ -22,7 +22,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final BrandSignUpService brandService;
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/favicon.ico", "/Users/chandle/Downloads/walnut/src/main/resources/static/brand/**");
+        web.ignoring().antMatchers("/Users/chandle/Downloads/walnut/src/main/resources/static/brand/**");
 
         super.configure(web);
     }
@@ -50,6 +50,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         , "/user/find-password"
                         , "/user/register/write"
                         , "/brand/register"
+                        , "/brand/register.do"
                 )
                 .permitAll();
         http.authorizeRequests()
@@ -63,7 +64,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .failureHandler(getFailureHandler())
                 .successHandler(new LogAuthenticationSuccess())
                 .permitAll();
-
         http.logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
                 .logoutSuccessUrl("/")

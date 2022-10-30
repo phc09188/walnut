@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:value="${brandInfo.brandName}"> </title>
+</head>
+<body>
+  <h1 th:text="${brandInfo.brandName}" ></h1>
+<div th:replace="/fragments/layout.html :: fragment-brand-body-menu"></div>
+
+</body>
+</html>

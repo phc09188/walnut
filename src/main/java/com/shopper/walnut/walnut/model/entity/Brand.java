@@ -6,6 +6,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Getter
@@ -27,6 +29,9 @@ public class Brand implements BrandStatus {
     private UserClassification userClassification;
     @Embedded
     private Address address;
+
+    @OneToMany(mappedBy = "brand")
+    private List<BrandItem> list = new ArrayList<>();
 
     private String fileName;
     private String urlFileName;

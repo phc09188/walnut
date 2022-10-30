@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>카테고리 추가 </title>
+
+
+</head>
+<body>
+<div class="container">
+  <form role="form" th:action="@{/admin/category/addCategory.do}" th:object="${categoryForm}" method="post">
+    <div class="form-group">
+      <label th:for="categoryName">카테고리</label>
+      <input type="text" th:field="*{categoryName}" class="form-control" placeholder="카테고리를 입력하세요"
+             th:class="${#fields.hasErrors('categoryName')}? 'form-control fieldError' : 'form-control'">
+      <p th:if="${#fields.hasErrors('categoryName')}" th:errors="*{categoryName}">Incorrect data</p>
+    </div>
+    <div class="form-group">
+      <label th:for="subCategoryName">세부 카테고리</label>
+      <input type="text" th:field="*{subCategoryName}" class="form-control" placeholder="세부카테고리를 입력하세요"
+             th:class="${#fields.hasErrors('subCategoryName')}? 'form-control fieldError' : 'form-control'">
+      <p th:if="${#fields.hasErrors('subCategoryName')}" th:errors="*{subCategoryName}">Incorrect data</p>
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary">등록</button>
+  </form>
+</div>
+</body>
+</html>

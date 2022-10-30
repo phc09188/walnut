@@ -93,7 +93,9 @@ public class UserSignUpService implements UserDetailsService {
         }
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         User user = optionalMember.get();
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        if(user.getUserClassification() == UserClassification.USER){
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        }
         if(user.getUserClassification() == UserClassification.ADMIN){
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }

@@ -1,14 +1,12 @@
 package com.shopper.walnut.walnut.model.entity;
 
 import com.shopper.walnut.walnut.model.input.ItemStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Builder
+@Builder @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "brandItem")
@@ -17,12 +15,14 @@ public class BrandItem implements ItemStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer brandItemId;
 
-    @OneToOne()
+    @ManyToOne()
     @JoinColumn(name="brandId", nullable = false)
     public Brand brand;
     private String itemName;
-    private String itemImgUrl;
+    private String urlFileName;
+    private String fileName;
     private LocalDate addDt;
+    private long cnt;
     private long price;
     private long salePrice;
     private String itemInfo;
@@ -30,8 +30,9 @@ public class BrandItem implements ItemStatus {
     private String saleStatus;
     private double reviewScore;
     private long reviewCount;
+    private long payAmount;
+    private long totalTake;
+    private String subCategoryName;
 
-    private String fileName;
-    private String urlFileName;
 
 }

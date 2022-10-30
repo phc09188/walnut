@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>제품등록</title>
+</head>
+<body>
+<h1>제품등록</h1>
+
+
+<div class="detail">
+
+  <form th:action="@{/brand/main/item/add.do}" id="submitForm" method="post" enctype="multipart/form-data">
+
+    <table>
+      <tbody>
+      <tr>
+        <th>제품 카테고리</th>
+        <td>
+          <select name="subCategoryName" required>
+            <option value="">카테고리 선택</option>
+            <option th:selected="${x.subCategoryName} == ${detail.subCategoryName}"
+                    th:each="x :${category}"
+                    th:text="${x.subCategoryName}"
+                    th:value="${x.subCategoryName}"></option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th>제품명</th>
+        <td>
+          <input type="text" th:value="${detail.itemName}"
+                 name="itemName" required placeholder="제품명">
+        </td>
+      </tr>
+      <tr>
+        <th>첨부 파일</th>
+        <td>
+                   <span> <input type="file" name="file" placeholder="선택된 파일 없음"
+                                 required/>
+                   용량제한은 10MB</span>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          content
+        </th>
+        <td>
+                   <textarea type="text" name="itemInfo" placeholder="내용을 입력하세요"
+                             th:text="${detail.itemInfo}"></textarea>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          Price
+        </th>
+        <td>
+          <input type="text" name="price" th:value="${detail.price}"
+                 placeholder="금액을 입력하세요"/>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          수량
+        </th>
+        <td>
+          <input type="number" name="cnt" minlength="0"
+                 th:value="${detail.cnt}"/>
+        </td>
+      </tr>
+      <tr>
+        <th>제품상태</th>
+        <td>
+          <select name="saleStatus"
+                  th:value="${detail.saleStatus}">
+            <option th:selected="${detail.saleStatus}=='Sell'">
+              판매중
+            </option>
+            <option th:selected="${detail.saleStatus}=='SellNo'">
+              판매불가
+            </option>
+            <option th:selected="${detail.saleStatus}=='WareHousing'">
+              입고 준비중
+            </option>
+            <option th:selected="${detail.saleStatus}=='SoldOut'">
+              일시품절
+            </option>
+
+          </select>
+        </td>
+      </tr>
+<!--      <input type="hidden" name="writer" value="${sessionScope.userId}">-->
+      </tbody>
+    </table>
+    <button type="submit">제품 등록하기</button>
+  </form>
+</div>
+</body>
+</html>

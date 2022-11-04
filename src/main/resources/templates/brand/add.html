@@ -73,7 +73,7 @@
 
     <div class="form-group">
       <label th:for="fileName">사업자 등록증</label>
-      <input type="file"  class="form-control" placeholder="사진으 첨부해주세요."
+      <input type="file"  class="form-control" placeholder="사진을 첨부해주세요."
              th:class="${#fields.hasErrors('fileName')}? 'form-control  fieldError' : 'form-control'">
       <p th:if="${#fields.hasErrors('fileName')}" th:errors="*{fileName}">Incorrect data</p>
     </div>

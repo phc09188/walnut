@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BrandInput {
-    private Integer brandId;
+    private long brandId;
     private String brandName;
     private String brandPhone;
     private String brandLoginId;

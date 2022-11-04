@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>categoryList</title>
+</head>
+<body>
+<div class="subCategory" th:value="subCategoryList">
+    <span th:each="x : ${subCategoryList}">
+            <a th:href="@{/category/subCategoryList(subCategoryName = ${x.subCategoryName})}"><span th:text="${x.subCategoryName}"></span></a>|
+    </span>
+
+</div>
+
+</br>
+</hr>
+<div class="container">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>사진</th>
+            <th>브렌드</th>
+            <th>제품명</th>
+            <th>분류</th>
+            <th>가격/할인가</th>
+            <th>리뷰</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="x : ${items}">
+            <td><img th:src="${x.fileName}"/></td>
+            <td><span th:text="${x.brandName}"></span> </td>
+            <td><a th:href="@{/item/info(itemId = ${x.itemId})}"><span th:text="${x.itemName}"></span></a></td>
+            <td><span th:text="${x.subCategoryName}"></span></td>
+            <td><span th:text="${x.price} + '/' +${x.salePrice}"></span></td>
+            <td><span th:text="${x.reviewScore}"></span> </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

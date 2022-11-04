@@ -100,6 +100,6 @@ public class AdminController {
                 .categoryName(categoryDto.getCategoryName())
                 .build();
         categoryRepository.save(category);
-        return "redirect:/admin/category/list";
+        return "redirect:/admin/category/list.do";
     }
 }

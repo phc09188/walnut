@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BrandDto {
-    private int brandId;
+    private long brandId;
     private String brandName;
     private String brandPhone;
     private String brandLoginId;

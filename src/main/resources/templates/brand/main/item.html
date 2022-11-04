@@ -12,8 +12,10 @@
         <tr>
             <th>물품 이름</th>
             <th>제품 사진</th>
-            <th>원가/판매가</th>
-            <th>리뷰</th>
+            <th>원가</th>
+            <th>판매가</th>
+            <th>리뷰 수</th>
+            <th>평점</th>
             <th>조회수</th>
             <th>판매량</th>
             <th>편집</th>
@@ -21,12 +23,14 @@
         </thead>
         <tbody>
         <tr th:each="x : ${brandItemList}">
-            <form th:action="@{/brand/item/itemDetail}">
-                <input type="hidden" name="id" th:value="${x.brandItemId}">
+            <form th:object="${x}" th:action="@{/brand/main/item-edit.do}" method="get">
+                <input type="hidden" name="brandItemId" th:value="${x.brandItemId}">
                 <td><span name="itemName" th:text="${x.itemName}"></span></td>
-                <td><img th:src="${x.urlFileName}"></td>
-                <td><span name="price" th:text="${x.price} + '/' + ${x.salePrice}"></span>  </td>
-                <td><span name="review" th:text="${x.reviewCount} + '/'+${x.reviewScore}"></span></td>
+                <td><img name="urlFileName" th:src="${x.urlFileName}"></td>
+                <td><span name="price" th:text="${x.price}"></span> </td>
+                <td><span name="price" th:text="${x.salePrice}"></span> </td>
+                <td><span name="reviewCount" th:text="${x.reviewCount}"></span></td>
+                <td><span name="reviewScore" th:text="${x.reviewScore}"></span></td>
                 <td><span name="totalTake" th:text="${x.totalTake}"></span></td>
                 <td><button type="submit"> 수정 </button></td>
             </form>

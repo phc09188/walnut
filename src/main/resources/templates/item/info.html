@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+    <title>ItemInfo</title>
+</head>
+<body>
+<div class="itemInfo">
+  <table>
+    <tbody>
+    <tr>
+      <th>상품 명</th>
+      <td><p th:text="${item.itemName}"></p></td>
+    </tr>
+    <tr>
+      <th>샘플 이미지</th>
+      <td><img th:src="${item.fileName}"></td>
+    </tr>
+    <tr>
+      <th>가격/할인가 </th>
+      <td><p th:text="${item.price} +'/' + ${item.salePrice}"></p></td>
+    </tr>
+    <tr>
+      <th>잔여수량 </th>
+      <td><p th:text="${item.cnt}"></p></td>
+    </tr>
+    <tr>
+      <th>제품 설명</th>
+      <td><p th:text="${item.itemInfo}"></p></td>
+    </tr>
+    <tr>
+      <th>리뷰</th>
+      <td><p th:text="${item.reviewScore}+'('+ ${item.reviewCount} +')' "></p></td>
+    </tr>
+    <tr>
+      <th>상품 구매</th>
+      <td>
+        <span><a th:href="@{/item/cart(itemId = ${item.itemId})}">장바구니</a> |
+          <a th:href="@{/item/payment(itemId = ${item.itemId})}">구매하기</a> </span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
+
+</body>
+</html>

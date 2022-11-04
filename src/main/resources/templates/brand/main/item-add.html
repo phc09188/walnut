@@ -36,9 +36,7 @@
       <tr>
         <th>첨부 파일</th>
         <td>
-                   <span> <input type="file" name="file" placeholder="선택된 파일 없음"
-                                 required/>
-                   용량제한은 10MB</span>
+                   <span> <input type="file" name="file" placeholder="선택된 파일 없음" required/></span>
         </td>
       </tr>
       <tr>
@@ -47,7 +45,7 @@
         </th>
         <td>
                    <textarea type="text" name="itemInfo" placeholder="내용을 입력하세요"
-                             th:text="${detail.itemInfo}"></textarea>
+                           required  th:text="${detail.itemInfo}"></textarea>
         </td>
       </tr>
       <tr>
@@ -56,7 +54,16 @@
         </th>
         <td>
           <input type="text" name="price" th:value="${detail.price}"
-                 placeholder="금액을 입력하세요"/>
+                 required placeholder="금액을 입력하세요"/>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          SalePrice
+        </th>
+        <td>
+          <input type="text" name="salePrice" th:value="${detail.salePrice}"
+                 placeholder="할인된 요금을 입력하세요. 필수x"/>
         </td>
       </tr>
       <tr>
@@ -89,10 +96,12 @@
           </select>
         </td>
       </tr>
-<!--      <input type="hidden" name="writer" value="${sessionScope.userId}">-->
       </tbody>
     </table>
-    <button type="submit">제품 등록하기</button>
+    <div class="buttons">
+      <button type="submit" th:if="${!isEdit}">제품 등록하기</button>
+      <button type="submit" th:if="${isEdit}">제품 수정하기</button>
+    </div>
   </form>
 </div>
 </body>

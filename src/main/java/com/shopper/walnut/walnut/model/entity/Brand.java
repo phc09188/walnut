@@ -18,7 +18,7 @@ import java.util.List;
 public class Brand implements BrandStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer brandId;
+    private long brandId;
     private String brandName;
     private String brandPhone;
     private String brandLoginId;
@@ -35,4 +35,6 @@ public class Brand implements BrandStatus {
 
     private String fileName;
     private String urlFileName;
+
+
 }

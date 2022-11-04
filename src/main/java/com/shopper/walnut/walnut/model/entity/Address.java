@@ -13,6 +13,7 @@ public class Address {
     private String streetAdr;
     private String detailAdr;
     protected Address(){
+
     }
     public Address(String zipCode, String streetAdr, String detailAdr) {
         this.zipCode = zipCode;

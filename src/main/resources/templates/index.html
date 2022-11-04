@@ -1,16 +1,53 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <title>fastlms</title>
+    <title>호두</title>
 </head>
 <body>
 <h1>메인 페이지 </h1>
 <div th:replace="/fragments/layout.html :: fragment-body-menu"></div>
-
-
-
-
+<div th:value="${categoryNames}">
+    <a th:href="@{/category/categoryList(categoryName = ${categoryNames.get(0)})}"><span th:text="${categoryNames.get(0)}"></span></a>
+    |
+    <a th:href="@{/category/categoryList(categoryName = ${categoryNames.get(1)})}"><span th:text="${categoryNames.get(1)}"></span></a>
+    |
+    <a th:href="@{/category/categoryList(categoryName = ${categoryNames.get(2)})}"><span th:text="${categoryNames.get(2)}"></span></a>
+    |
+    <a th:href="@{/category/categoryList(categoryName = ${categoryNames.get(3)})}"><span th:text="${categoryNames.get(3)}"></span></a>
+</div>
+</br>
+</hr>
+<!--나중에 고치자-->
+<div class="container">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>사진</th>
+            <th>브렌드</th>
+            <th>제품명</th>
+            <th>분류</th>
+            <th>가격/할인가</th>
+            <th>리뷰</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="x : ${items}">
+            <td><img th:src="${x.fileName}"/></td>
+            <td><span th:text="${x.brandName}"></span> </td>
+            <td><a th:href="@{/item/info(itemId = ${x.itemId})}"><span th:text="${x.itemName}"></span></a></td>
+            <td><span th:text="${x.subCategoryName}"></span></td>
+            <td><span th:text="${x.price} + '/' +${x.salePrice}"></span></td>
+            <td><span th:text="${x.reviewScore}"></span> </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="numbersPage" >
+        <th:block th:each="page: ${#numbers.sequence(startPage,totalNum)}">
+            <a th:if="${page!=nowPage}" th:href="@{/(page = ${page - 1})}"  th:text="${page}"></a>
+            <strong th:if="${page == nowPage}" th:text="${page}" style="color:red"></strong>
+        </th:block>
+    </div>
 </div>
 </body>
 </html>

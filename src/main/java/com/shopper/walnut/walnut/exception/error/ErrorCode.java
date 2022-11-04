@@ -12,6 +12,7 @@ public enum ErrorCode {
     CATEGORY_NOT_EXIST("카테고리가 없습니다"),
     BRAND_ALREADY_EXIST("이미 존재하는 브랜드입니다."),
     BRANDITEM_NOT_EXIST("물건 정보가 존재하지 않습니다."),
+    ITEM_NOT_FOUND("물건 정보가 사라졌습니다."),
     CATEGORY_ALREADY_EXIST("해당 서브카테고리가 이미 존재합니다.");
 
     private final String description;

@@ -58,10 +58,4 @@ public class BrandSignUpService {
         userRepository.save(User.toSign(brand));
     }
 
-    public BrandDto getById(int id) {
-        return brandRepository.findById(id).map(BrandDto::of).orElse(null);
-    }
-
-
-
 }

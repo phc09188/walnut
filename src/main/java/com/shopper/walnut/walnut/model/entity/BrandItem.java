@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class BrandItem implements ItemStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer brandItemId;
+    private long brandItemId;
 
     @ManyToOne()
     @JoinColumn(name="brandId", nullable = false)
@@ -21,6 +21,7 @@ public class BrandItem implements ItemStatus {
     private String itemName;
     private String urlFileName;
     private String fileName;
+
     private LocalDate addDt;
     private long cnt;
     private long price;
@@ -32,7 +33,7 @@ public class BrandItem implements ItemStatus {
     private long reviewCount;
     private long payAmount;
     private long totalTake;
+
+    private String categoryName;
     private String subCategoryName;
-
-
 }

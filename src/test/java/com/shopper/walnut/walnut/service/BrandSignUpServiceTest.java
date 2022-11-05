@@ -1,14 +1,12 @@
 package com.shopper.walnut.walnut.service;
 
 import com.shopper.walnut.walnut.model.input.BrandInput;
-import com.shopper.walnut.walnut.model.input.BrandStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class BrandSignUpServiceTest {
     @Autowired

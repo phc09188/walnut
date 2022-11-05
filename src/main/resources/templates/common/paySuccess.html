@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>결제 성공</title>
+</head>
+<body>
+  <h2> 결제가 완료되었습니다.</h2>
+  <br/>
+  <span><a th:href="@{/user/myPage(userId = ${userId})}">마이페이지</a> |
+    <a href="/">홈</a>
+  </span>
+</body>
+</html>

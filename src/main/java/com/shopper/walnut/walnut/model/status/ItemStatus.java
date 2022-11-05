@@ -1,4 +1,4 @@
-package com.shopper.walnut.walnut.model.input;
+package com.shopper.walnut.walnut.model.status;
 
 public interface ItemStatus {
 

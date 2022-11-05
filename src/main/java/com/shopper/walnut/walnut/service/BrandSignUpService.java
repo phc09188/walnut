@@ -42,18 +42,7 @@ public class BrandSignUpService {
         }
         String encPassword = BCrypt.hashpw(parameter.getBrandPassword(), BCrypt.gensalt());
         Address address = new Address(parameter.getZipCode(),parameter.getStreetAdr(),parameter.getDetailAdr());
-        Brand brand = Brand.builder()
-                .brandName(parameter.getBrandName())
-                .brandPhone(parameter.getBrandPhone())
-                .brandLoginId(parameter.getBrandLoginId())
-                .brandPassword(encPassword)
-                .address(address)
-                .brandRegDt(LocalDateTime.now())
-                .brandStatus(BrandStatus.MEMBER_STATUS_REQ)
-                .userClassification(UserClassification.SELLER)
-                .fileName(parameter.getFileName())
-                .urlFileName(parameter.getUrlFileName())
-                .build();
+        Brand brand = Brand.of(parameter,encPassword, address);
         brandRepository.save(brand);
         userRepository.save(User.toSign(brand));
     }

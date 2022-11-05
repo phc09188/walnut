@@ -70,6 +70,12 @@
              th:class="${#fields.hasErrors('brandPassword')}? 'form-control  fieldError' : 'form-control'">
       <p th:if="${#fields.hasErrors('brandPassword')}" th:errors="*{brandPassword}">Incorrect data</p>
     </div>
+    <div class="form-group">
+      <label th:for="brandEmail">이메일</label>
+      <input type="brandEmail" th:field="*{brandEmail}" class="form-control" placeholder="이메일을 입력하세요"
+             th:class="${#fields.hasErrors('brandEmail')}? 'form-control  fieldError' : 'form-control'">
+      <p th:if="${#fields.hasErrors('brandEmail')}" th:errors="*{brandEmail}">Incorrect data</p>
+    </div>
 
     <div class="form-group">
       <label th:for="fileName">사업자 등록증</label>

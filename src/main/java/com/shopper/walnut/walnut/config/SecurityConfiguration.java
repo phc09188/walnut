@@ -52,6 +52,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         , "/brand/register"
                         , "/brand/register.do"
                         , "/category/**"
+                        , "/item/info"
                 )
                 .permitAll();
         http.authorizeRequests()

@@ -1,7 +1,6 @@
 package com.shopper.walnut.walnut.model.dto;
 
 import com.shopper.walnut.walnut.model.entity.BrandItem;
-import com.shopper.walnut.walnut.model.input.ItemStatus;
 import lombok.*;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

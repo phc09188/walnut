@@ -6,7 +6,7 @@ import com.shopper.walnut.walnut.model.dto.BrandDto;
 import com.shopper.walnut.walnut.model.dto.CategoryDto;
 import com.shopper.walnut.walnut.model.entity.Brand;
 import com.shopper.walnut.walnut.model.entity.Category;
-import com.shopper.walnut.walnut.model.input.BrandStatus;
+import com.shopper.walnut.walnut.model.status.BrandStatus;
 import com.shopper.walnut.walnut.model.input.CategoryInput;
 import com.shopper.walnut.walnut.repository.BrandRepository;
 import com.shopper.walnut.walnut.repository.CategoryRepository;

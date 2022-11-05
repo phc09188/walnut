@@ -13,6 +13,7 @@ public class BrandInput {
     private long brandId;
     private String brandName;
     private String brandPhone;
+    private String brandEmail;
     private String brandLoginId;
     private String brandPassword;
     private LocalDateTime brandRegDt;

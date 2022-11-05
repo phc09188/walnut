@@ -1,6 +1,6 @@
 package com.shopper.walnut.walnut.model.entity;
 
-import com.shopper.walnut.walnut.model.input.ItemStatus;
+import com.shopper.walnut.walnut.model.status.ItemStatus;
 import lombok.*;
 
 import javax.persistence.*;

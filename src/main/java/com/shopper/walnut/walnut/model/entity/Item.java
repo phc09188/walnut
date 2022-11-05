@@ -1,6 +1,8 @@
 package com.shopper.walnut.walnut.model.entity;
 
-import com.shopper.walnut.walnut.model.input.ItemStatus;
+import com.shopper.walnut.walnut.exception.ItemException;
+import com.shopper.walnut.walnut.exception.error.ErrorCode;
+import com.shopper.walnut.walnut.model.status.ItemStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -34,6 +36,8 @@ public class Item implements ItemStatus {
     private long payAmount;
     private long totalTake;
 
+
+
     private String categoryName;
     private String subCategoryName;
 
@@ -60,5 +64,21 @@ public class Item implements ItemStatus {
                 .categoryName(item.getCategoryName())
                 .subCategoryName(item.getSubCategoryName())
                 .build();
+    }
+
+    //==비지니스 로직==//
+
+    // stock 증가
+    public void addStock(long stockQuantity) {
+        this.cnt += stockQuantity;
+    }
+
+    // stock 감소
+    public void removeStock(long stockQuantity) {
+        long remainStock = this.cnt - stockQuantity;
+        if (remainStock < 0 || stockQuantity <= 0) {
+            throw new ItemException(ErrorCode.ITEM_IS_EMPTY);
+        }
+        this.cnt = remainStock;
     }
 }

@@ -1,14 +1,11 @@
 package com.shopper.walnut.walnut.service;
 
 import com.shopper.walnut.walnut.conponents.MailComponents;
-import com.shopper.walnut.walnut.exception.UserRegisterException;
+import com.shopper.walnut.walnut.exception.UserException;
 import com.shopper.walnut.walnut.exception.error.ErrorCode;
-import com.shopper.walnut.walnut.model.entity.Address;
-import com.shopper.walnut.walnut.model.entity.Brand;
 import com.shopper.walnut.walnut.model.input.UserClassification;
 import com.shopper.walnut.walnut.model.input.UserInput;
 import com.shopper.walnut.walnut.model.entity.User;
-import com.shopper.walnut.walnut.model.input.UserStatus;
 import com.shopper.walnut.walnut.repository.BrandRepository;
 import com.shopper.walnut.walnut.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +17,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,25 +33,11 @@ public class UserSignUpService implements UserDetailsService {
         //해당 아이디의 유저가 존재하는지 확인
         Optional<User> optionalUser = userRepository.findByUserIdAndUserEmail(parameter.getUserId(),parameter.getUserEmail());
         if(optionalUser.isPresent()){
-            throw new UserRegisterException(ErrorCode.USERID_ALREADY_EXIST);
+            throw new UserException(ErrorCode.USERID_ALREADY_EXIST);
         }
         String encPassword = BCrypt.hashpw(parameter.getUserPassword(), BCrypt.gensalt());
         String uuid = UUID.randomUUID().toString();
-        User user = User.builder()
-                .userId(parameter.getUserId())
-                .userName(parameter.getUserName())
-                .userEmail(parameter.getUserEmail())
-                .userPassword(encPassword)
-                .address(new Address(parameter.getZipCode(),parameter.getStreetAdr(),parameter.getDetailAdr()))
-                .userPhone(parameter.getUserPhone())
-                .userStatus(UserStatus.MEMBER_STATUS_REQ)
-                .userRegDt(LocalDate.now())
-                .emailAuthKey(uuid)
-                .marketingYn(parameter.isMarketingYn())
-                .privateYn(parameter.isPrivateYn())
-                .payYn(parameter.isPayYn())
-                .userClassification(UserClassification.USER)
-                .build();
+        User user = User.of(parameter,encPassword,uuid);
         userRepository.save(user);
 
         /* test를 위해 잠시 메일은 중단
@@ -85,6 +67,9 @@ public class UserSignUpService implements UserDetailsService {
         return true;
     }
 
+    /**
+     * 권한 별 로그인
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> optionalMember = userRepository.findById(username);

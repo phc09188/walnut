@@ -7,13 +7,16 @@ import com.shopper.walnut.walnut.model.dto.BrandItemDto;
 import com.shopper.walnut.walnut.model.entity.Brand;
 import com.shopper.walnut.walnut.model.entity.BrandItem;
 import com.shopper.walnut.walnut.model.entity.Category;
+import com.shopper.walnut.walnut.model.entity.Order;
 import com.shopper.walnut.walnut.model.input.BrandInput;
 import com.shopper.walnut.walnut.model.input.BrandItemInput;
+import com.shopper.walnut.walnut.model.input.OrderInput;
 import com.shopper.walnut.walnut.repository.BrandItemRepository;
 import com.shopper.walnut.walnut.repository.BrandRepository;
 import com.shopper.walnut.walnut.service.BrandItemService;
 import com.shopper.walnut.walnut.service.BrandSignUpService;
 import com.shopper.walnut.walnut.service.CategoryService;
+import com.shopper.walnut.walnut.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,6 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +49,7 @@ public class BrandController {
     private final BrandItemRepository brandItemRepository;
     private final BrandItemService brandItemService;
     private final CategoryService categoryService;
+    private final OrderService orderService;
 
     /** 메인페이지 **/
     @GetMapping("/brand/main/detail.do")
@@ -204,7 +209,15 @@ public class BrandController {
         Optional<Brand> optionalBrand = brandRepository.findByBrandLoginId(user.getUsername());
         brandItemService.add(parameter, optionalBrand.get());
         return "redirect:/brand/main/item.do";
-
+    }
+    /**주문리스트**/
+    @GetMapping("/brand/main/orderList")
+    public String orderList(@AuthenticationPrincipal User logInUser
+            ,@ModelAttribute("orderInput") OrderInput orderInput, Model model){
+        Brand brand = brandRepository.findByBrandLoginId(logInUser.getUsername()).get();
+        List<Order> orders = orderService.findAllByString(orderInput, brand);
+        model.addAttribute("orders", orders);
+        return "/brand/main/orderList";
     }
 
 

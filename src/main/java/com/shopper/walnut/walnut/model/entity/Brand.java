@@ -35,6 +35,9 @@ public class Brand implements BrandStatus {
     @OneToMany(mappedBy = "brand")
     private List<BrandItem> list = new ArrayList<>();
 
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
+    private List<Order> orders = new ArrayList<>();
+
     private String fileName;
     private String urlFileName;
 

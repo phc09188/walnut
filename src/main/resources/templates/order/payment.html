@@ -8,7 +8,7 @@
 <div class="itemInfo">
   <table>
     <tbody>
-    <form th:action="/item/pay" role="form" method="post">
+    <form th:action="@{/order/pay}" role="form" method="post">
       <input name="itemId" type="hidden" th:value="${item.itemId}"/>
       <tr>
         <th><p>결제 정보</p></th>
@@ -27,7 +27,7 @@
       </tr>
       <tr>
         <th>포인트 사용 </th>
-        <td><input name="userPoint" type="number"  th:placeholder="'최대 ' + ${user.userPoint} '까지 가능'"></td>
+        <td><input name="userPoint" type="number"  th:placeholder="'최대 ' + ${user.userPoint} + '까지 가능'"></td>
       </tr>
       <tr>
         <th>배송지</th>
@@ -38,9 +38,14 @@
       </tr>
       <tr>
         <th>수량 </th>
-        <td><input name="userPoint" type="number"  th:placeholder="'최대 ' + ${user.userPoint} '까지 가능'"></td>
+        <td>
+            <p th:text="${itemCnt}"></p>
+          <input name="itemCnt" type="hidden"  th:value="${itemCnt}">
+        </td>
       </tr>
-      <button type="submit">구매하기</button>
+      <tr>
+        <button type="submit">구매하기</button>
+      </tr>
     </form>
     </tbody>
   </table>

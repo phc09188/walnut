@@ -7,6 +7,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Getter
@@ -35,6 +37,9 @@ public class Item implements ItemStatus {
     private long reviewCount;
     private long payAmount;
     private long totalTake;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<Cart> cartList = new ArrayList<>();
 
 
 

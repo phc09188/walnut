@@ -28,15 +28,19 @@ public class AdminController {
     private final BrandRepository brandRepository;
     private final CategoryRepository categoryRepository;
 
+    /**관리자 메인**/
     @GetMapping("/admin/main.do")
     public String index(){
         return "admin/main";
     }
+
+    /**관리자 유저 관리 페이지 **/
     @GetMapping("/admin/user/list.do")
     public String userList(){
         return "admin/user/list";
     }
 
+    /**관리자 브랜드 관리 페이지**/
     @GetMapping("/admin/brand/list.do")
     public String brandList(Model model){
         List<Brand> allBrand = brandRepository.findAll();
@@ -44,6 +48,8 @@ public class AdminController {
         model.addAttribute("brandList", list);
         return "admin/brand/list";
     }
+
+    /**관리자 브랜드 입점 승인 페이지**/
     @GetMapping("/admin/brand/approve.do")
     public String brandApprove(Model model){
         List<Brand> notOkBrand = brandRepository.findAllByBrandStatus(BrandStatus.MEMBER_STATUS_REQ);
@@ -53,6 +59,8 @@ public class AdminController {
 
         return "admin/brand/approve";
     }
+
+    /** 브랜드 입점 승인 **/
     @PostMapping("/admin/approve/start.do")
     public String approve(BrandDto dto){
         Optional<Brand> optionalBrand = brandRepository.findByBrandName(dto.getBrandName());
@@ -65,13 +73,14 @@ public class AdminController {
         brandRepository.save(brand);
         return "redirect:/admin/approve.do";
     }
+    /** 카테고리 리스트 출력 **/
     @GetMapping("/admin/category/list.do")
     public String categoryList(Model model){
         List<Category> list =  categoryRepository.findAll();
         model.addAttribute("list", list);
         return "admin/category/list";
     }
-
+    /**카테고리 삭제**/
     @PostMapping("/admin/category/delete.do")
     public String deleteCategory(CategoryDto categoryDto){
         Optional<Category> optionalCategory = categoryRepository.findById(categoryDto.getSubCategoryName());
@@ -82,13 +91,13 @@ public class AdminController {
         categoryRepository.delete(category);
         return "redirect:/admin/category/list";
     }
-
+    /** 카테고리 추가 폼 **/
     @GetMapping("/admin/category/add")
     public String categoryAddForm(Model model){
         model.addAttribute("categoryForm", new CategoryDto());
         return "admin/category/add";
     }
-
+    /**카테고리 추가**/
     @PostMapping("/admin/category/addCategory.do")
     public String categoryAdd(Model model, HttpServletRequest request, @Validated CategoryInput categoryDto){
         Optional<Category> categoryOptional = categoryRepository.findById(categoryDto.getSubCategoryName());

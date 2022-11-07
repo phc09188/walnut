@@ -22,23 +22,25 @@ import java.util.UUID;
 public class UserController {
     private final UserSignUpService signUpService;
 
+    /**로그인(Security)**/
     @RequestMapping("/user/login")
     public String login(){
         return "user/login";
     }
-
+    /**회원가입 폼**/
     @GetMapping("/user/register")
     public String register(Model model) {
         model.addAttribute("memberForm",new UserInput());
         return "user/register";
     }
-
+    /** 회원가입 **/
     @PostMapping("/user/register/write")
     public String registerSubmit(@Validated UserInput parameter) {
         signUpService.register(parameter);
 
         return "redirect:/";
     }
+    /**이메일 인증 페이지**/
     @GetMapping("/user/email-auth")
     public String emailAuth(Model model, HttpServletRequest request) {
 

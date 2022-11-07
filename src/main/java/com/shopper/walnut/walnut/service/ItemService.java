@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ItemService {
     private final ItemRepository itemRepository;
-
+    /**item 리스트 페이징처리**/
     public Page<Item> getAllList(Pageable pageable){
         return itemRepository.findAll(
                 PageRequest.of(pageable.getPageNumber(), 10, Sort.by("reviewScore")));

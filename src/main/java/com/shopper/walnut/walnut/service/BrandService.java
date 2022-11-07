@@ -17,6 +17,7 @@ public class BrandService {
     private final BrandRepository repository;
     private final MailComponents mailComponents;
 
+    /** 브랜드 정보 수정 **/
     public boolean set(BrandInput parameter) {
         Optional<Brand> optionalBrand = repository.findById(parameter.getBrandId());
         if(!optionalBrand.isPresent()){
@@ -34,7 +35,7 @@ public class BrandService {
         repository.save(brand);
         return true;
     }
-    /**이메일 보내기 **/
+    /** 제고소진 및 상품 상태 변경시 이메일 보내기 **/
     public void sendEmail(BrandItem brandItem) {
         if(brandItem.getSaleStatus() == ItemStatus.ITEM_STATUS_ING){
             return;

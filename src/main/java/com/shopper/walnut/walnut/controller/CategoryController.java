@@ -19,6 +19,7 @@ public class CategoryController {
     private final CategoryRepository categoryRepository;
     private final ItemRepository itemRepository;
 
+    /**카테고리에 맞는 상품 view**/
     @GetMapping("/category/categoryList")
     public String categoryItem(@RequestParam String categoryName, Model model){
         List<Category> subCategoryList = categoryRepository.findAllByCategoryName(categoryName);
@@ -28,7 +29,7 @@ public class CategoryController {
 
         return "/category/categoryList";
     }
-
+    /**서브카테고리에 맞는 상품 view**/
     @GetMapping("/category/subCategoryList")
     public String subCategoryItem(@RequestParam String subCategoryName, Model model){
         List<Item> items = itemRepository.findAllBySubCategoryName(subCategoryName);

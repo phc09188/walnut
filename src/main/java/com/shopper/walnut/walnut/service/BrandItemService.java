@@ -44,6 +44,7 @@ public class BrandItemService {
         brandItemRepository.save(item);
 
     }
+
     public BrandItemDto getById(long id) {
         return brandItemRepository.findById(id).map(BrandItemDto::of).orElse(null);
     }

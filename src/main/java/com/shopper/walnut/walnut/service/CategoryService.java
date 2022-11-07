@@ -20,7 +20,7 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-    /**서브카테고리롤 카테고리 찾기**/
+    /**서브카테고리로 카테고리 찾기**/
     public Category findCategoryName(String id) {
         Optional<Category> optionalCategory =  categoryRepository.findById(id);
         if(optionalCategory.isEmpty()){
@@ -29,6 +29,7 @@ public class CategoryService {
         return optionalCategory.get();
     }
 
+    /**  category list 설정**/
     public List<String> getCategoryNames(){
         List<String> categoryNames = new ArrayList<>();
         categoryNames.add("상의"); categoryNames.add("하의"); categoryNames.add("아우터"); categoryNames.add("신발");

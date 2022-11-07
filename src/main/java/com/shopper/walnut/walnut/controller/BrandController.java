@@ -65,13 +65,13 @@ public class BrandController {
         return "brand/main/detail";
 
     }
-    /** 등록 **/
+    /** 입점 신청 폼 **/
     @GetMapping("/brand/register")
     public String add(Model model) {
         model.addAttribute("brandForm",new BrandDto());
         return "brand/add";
     }
-
+    /** 입점 신청 **/
     @PostMapping("/brand/register.do")
     public String addSubmit(Model model, HttpServletRequest request
             , MultipartFile file
@@ -175,7 +175,7 @@ public class BrandController {
 
         return "brand/main/item-add";
     }
-
+    /**상품 등록**/
     @PostMapping("/brand/main/item/add.do")
     public String itemAdd(@AuthenticationPrincipal User user,
                           MultipartFile file,

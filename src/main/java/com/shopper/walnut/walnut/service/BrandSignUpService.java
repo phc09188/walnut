@@ -29,11 +29,11 @@ import java.util.UUID;
 @Service
 public class BrandSignUpService {
     private final BrandRepository brandRepository;
-    /**
-     * userRepository는 user 계정과 brand계정끼리 충돌을 방지하기 위해 체크하는 역할로 사용
-     */
+
     private final UserRepository userRepository;
 
+
+    /** 브랜드 입점**/
     public void register(BrandInput parameter){
         Optional<User> optionalUser = userRepository.findById(parameter.getBrandLoginId());
         Optional<Brand> optionalBrand = brandRepository.findByBrandName(parameter.getBrandName());

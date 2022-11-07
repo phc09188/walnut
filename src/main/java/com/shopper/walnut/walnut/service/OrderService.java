@@ -49,11 +49,7 @@ public class OrderService {
         order.cancel();
     }
 
-    /**
-     * 2022.11.06 에러 발견
-     * enum 타입의 내용을 String으로 변환하여 repository를  통해 찾는 함수
-     * 왜 안 되는건지 이유 확인하기
-     */
+    /** OrderInput에 status와 이름을 입력받아 리스트 반환**/
     public List<Order> findAllByString(OrderInput orderSearch, Brand brand) {
         if(orderSearch.getUserName() == null && orderSearch.getOrderStatus() == null){
             return orderRepository.findAllByBrand(brand);
@@ -62,10 +58,10 @@ public class OrderService {
             return orderRepository.findAllByUserAndBrand(user,brand);
         }else if(orderSearch.getUserName().equals("") && orderSearch.getOrderStatus() != null){
             String key = orderSearch.getOrderStatus().getKey(); String value = orderSearch.getOrderStatus().getValue();
-            return orderRepository.findAllByStatusAndBrand(orderSearch.getOrderStatus().getValue(), brand);
+            return orderRepository.findAllByStatusAndBrand(orderSearch.getOrderStatus(), brand);
         }else{
             User user = userRepository.findByUserName(orderSearch.getUserName()).get();
-            return orderRepository.findAllByUserAndStatusAndBrand(user, orderSearch.getOrderStatus().getKey(), brand);
+            return orderRepository.findAllByUserAndStatusAndBrand(user, orderSearch.getOrderStatus(), brand);
         }
     }
 }

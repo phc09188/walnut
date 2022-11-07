@@ -29,6 +29,7 @@ public class UserSignUpService implements UserDetailsService {
     private final BrandRepository brandRepository;
     private final MailComponents mailComponents;
 
+    /**회원가입**/
     public void register(UserInput parameter){
         //해당 아이디의 유저가 존재하는지 확인
         Optional<User> optionalUser = userRepository.findByUserIdAndUserEmail(parameter.getUserId(),parameter.getUserEmail());
@@ -48,7 +49,7 @@ public class UserSignUpService implements UserDetailsService {
         mailComponents.sendMail(email, subject, text);*/
 
     }
-
+    /** 이메일 인증 여부 확인**/
     public boolean emailAuth(String uuid) {
 
         Optional<User> optionalUser = userRepository.findByEmailAuthKey(uuid);
@@ -67,9 +68,7 @@ public class UserSignUpService implements UserDetailsService {
         return true;
     }
 
-    /**
-     * 권한 별 로그인
-     */
+    /** 권한 별 로그인 **/
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> optionalMember = userRepository.findById(username);

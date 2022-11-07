@@ -26,12 +26,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/item")
 public class ItemController {
-    private final ItemService itemService;
-    private final OrderService orderService;
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
-    private final OrderRepository orderRepository;
-    private final CartRepository cartRepository;
+
     /** 물품 정보**/
     @GetMapping("/info")
     public String itemInfo(Model model, @RequestParam Long itemId){

@@ -4,6 +4,7 @@ package com.shopper.walnut.walnut.model.entity;
 import com.shopper.walnut.walnut.controller.BrandController;
 import com.shopper.walnut.walnut.model.input.UserClassification;
 import com.shopper.walnut.walnut.model.input.UserInput;
+import com.shopper.walnut.walnut.model.status.MemberShip;
 import com.shopper.walnut.walnut.model.status.UserStatus;
 import lombok.*;
 
@@ -17,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "user")
-public class User implements UserStatus {
+public class User {
     @Id
     private String userId;
     private String userName;
@@ -29,6 +30,9 @@ public class User implements UserStatus {
     private Address address;
     private String userPhone;
     private LocalDate userRegDt;
+    @Enumerated(EnumType.STRING)
+    private MemberShip memberShip;
+    private long payAmount;
 
     @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
@@ -42,7 +46,8 @@ public class User implements UserStatus {
     private boolean emailAuthYn;
     private String emailAuthKey;
 
-    private String userStatus;
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
     private UserClassification userClassification;
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean marketingYn;
@@ -61,8 +66,10 @@ public class User implements UserStatus {
                 .userRegDt(LocalDate.now())
                 .userCache(0)
                 .userPoint(0)
+                .memberShip(MemberShip.BRONZE)
+                .payAmount(0)
                 .emailAuthYn(true)
-                .userStatus(UserStatus.MEMBER_STATUS_ING)
+                .userStatus(UserStatus.ING)
                 .userClassification(UserClassification.SELLER)
                 .marketingYn(true)
                 .privateYn(true)
@@ -76,9 +83,11 @@ public class User implements UserStatus {
                 .userName(parameter.getUserName())
                 .userEmail(parameter.getUserEmail())
                 .userPassword(encPassword)
+                .memberShip(MemberShip.BRONZE)
+                .payAmount(0)
                 .address(new Address(parameter.getZipCode(),parameter.getStreetAdr(),parameter.getDetailAdr()))
                 .userPhone(parameter.getUserPhone())
-                .userStatus(UserStatus.MEMBER_STATUS_REQ)
+                .userStatus(UserStatus.REQ)
                 .userRegDt(LocalDate.now())
                 .userCache(0)
                 .userPoint(0)

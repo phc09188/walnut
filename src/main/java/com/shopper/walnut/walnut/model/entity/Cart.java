@@ -22,6 +22,7 @@ public class Cart {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "itemId")
     private Item item;
+    private long cnt;
 
 
     //생성자

@@ -10,7 +10,7 @@
   <div>
     <a href="/user/register">회원 가입</a>
     |
-    <a href="/user/info">회원 정보</a>
+    <a href="/user/myPage">마이페이지</a>
     |
     <a href="/user/login">로그인</a>
     |
@@ -41,13 +41,22 @@
   <a href="/brand/main/item-add.do">판매 물품 등록하기</a>
   |
   <a href="/brand/main/orderList">주문 현황</a>
+  |
   <a href="/user/logout"> 로그아웃 </a>
   <br/>
   <hr/>
 </div>
-
-
-
+<div th:fragment="fragment-mypage-body-menu">
+  <a href="/user/info">회원 정보 수정하기</a>
+  |
+  <a href="/user/cache">캐시 충전</a>
+  |
+  <a href="/user/cart">장바구니</a>
+  |
+  <a href="/user/orderList">주문 내역</a> <!--  배송 완료된 내용(1주일) + 배송 안끝난 내용 // 주문 취소버튼 + 배송 완료 버튼-->
+  <br/>
+  <hr/>
+</div>
 
 </body>
 </html>

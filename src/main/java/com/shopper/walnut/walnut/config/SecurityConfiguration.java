@@ -1,7 +1,7 @@
 package com.shopper.walnut.walnut.config;
 
 import com.shopper.walnut.walnut.service.BrandSignUpService;
-import com.shopper.walnut.walnut.service.UserSignUpService;
+import com.shopper.walnut.walnut.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    private final UserSignUpService userService;
+    private final UserService userService;
     private final BrandSignUpService brandService;
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -72,7 +72,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .invalidateHttpSession(true);
 
         http.exceptionHandling()
-                .accessDeniedPage("/error/denied");
+                .accessDeniedPage("/common/error");
 
 
         super.configure(http);

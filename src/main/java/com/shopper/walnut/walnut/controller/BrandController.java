@@ -4,10 +4,7 @@ import com.shopper.walnut.walnut.exception.BrandRegisterException;
 import com.shopper.walnut.walnut.exception.error.ErrorCode;
 import com.shopper.walnut.walnut.model.dto.BrandDto;
 import com.shopper.walnut.walnut.model.dto.BrandItemDto;
-import com.shopper.walnut.walnut.model.entity.Brand;
-import com.shopper.walnut.walnut.model.entity.BrandItem;
-import com.shopper.walnut.walnut.model.entity.Category;
-import com.shopper.walnut.walnut.model.entity.Order;
+import com.shopper.walnut.walnut.model.entity.*;
 import com.shopper.walnut.walnut.model.input.BrandInput;
 import com.shopper.walnut.walnut.model.input.BrandItemInput;
 import com.shopper.walnut.walnut.model.input.OrderInput;
@@ -25,10 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +37,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
+@RequestMapping("/brand")
 public class BrandController {
     private final BrandSignUpService signUpService;
     private final BrandRepository brandRepository;
@@ -52,7 +47,7 @@ public class BrandController {
     private final OrderService orderService;
 
     /** 메인페이지 **/
-    @GetMapping("/brand/main/detail.do")
+    @GetMapping("/main/detail.do")
     public String brandMain(Model model, @AuthenticationPrincipal User user){
         String brandLogInId = user.getUsername();
         Optional<Brand> optionalBrand = brandRepository.findByBrandLoginId(brandLogInId);
@@ -66,13 +61,13 @@ public class BrandController {
 
     }
     /** 입점 신청 폼 **/
-    @GetMapping("/brand/register")
+    @GetMapping("/register")
     public String add(Model model) {
         model.addAttribute("brandForm",new BrandDto());
         return "brand/add";
     }
     /** 입점 신청 **/
-    @PostMapping("/brand/register.do")
+    @PostMapping("/register.do")
     public String addSubmit(Model model, HttpServletRequest request
             , MultipartFile file
             , @Validated BrandInput parameter) {
@@ -146,7 +141,7 @@ public class BrandController {
         return new String[]{newFilename, newUrlFilename};
     }
     /** 아이템 리스트 출력 **/
-    @GetMapping("/brand/main/item.do")
+    @GetMapping("/main/item.do")
     public String brandItemList(Model model, @AuthenticationPrincipal User user){
         Optional<Brand> brand = brandRepository.findByBrandLoginId(user.getUsername());
         List<BrandItem> brandItemList = brandItemRepository.findAllByBrand(brand.get());
@@ -156,7 +151,7 @@ public class BrandController {
     }
 
     /** 아이템 추가 or Edit **/
-    @GetMapping(value = {"/brand/main/item-add.do", "/brand/main/item-edit.do"})
+    @GetMapping(value = {"/main/item-add.do", "/main/item-edit.do"})
     public String itemAddForm(HttpServletRequest req,Model model, BrandItemDto dto){
         boolean isEdit = req.getRequestURI().contains("/item-edit");
         BrandItemDto dto2 = new BrandItemDto();
@@ -176,7 +171,7 @@ public class BrandController {
         return "brand/main/item-add";
     }
     /**상품 등록**/
-    @PostMapping("/brand/main/item/add.do")
+    @PostMapping("/main/item/add.do")
     public String itemAdd(@AuthenticationPrincipal User user,
                           MultipartFile file,
                           BrandItemInput parameter){
@@ -211,13 +206,24 @@ public class BrandController {
         return "redirect:/brand/main/item.do";
     }
     /**주문리스트**/
-    @GetMapping("/brand/main/orderList")
+    @GetMapping("/main/orderList")
     public String orderList(@AuthenticationPrincipal User logInUser
             ,@ModelAttribute("orderInput") OrderInput orderInput, Model model){
         Brand brand = brandRepository.findByBrandLoginId(logInUser.getUsername()).get();
         List<Order> orders = orderService.findAllByString(orderInput, brand);
         model.addAttribute("orders", orders);
         return "/brand/main/orderList";
+    }
+
+    /** 매출 확인 **/
+    @GetMapping("/main/account.do")
+    public String account(@AuthenticationPrincipal User logInUser, Model model){
+        Brand brand = brandRepository.findByBrandLoginId(logInUser.getUsername()).get();
+        List<BrandItem> items = brandItemRepository.findAllByBrand(brand);
+        long amount =  brandItemService.findTotalAmount(items);
+        model.addAttribute("items", items);
+        model.addAttribute("total", amount);
+        return "/brand/main/account";
     }
 
 

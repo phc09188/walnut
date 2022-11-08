@@ -39,24 +39,27 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문상태 [ORDER, CANCEL]
 
-
     public void setMember(User user) {
         this.user = user;
         user.getOrders().add(this);
     }
+
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
         orderItem.setOrder(this);
     }
+
     public void setDelivery(Delivery delivery) {
         this.delivery = delivery;
         delivery.setOrder(this);
     }
+
     /**생성 메서드**/
-    public static Order createOrder(User user, Delivery delivery, OrderItem... orderItems) {
+    public static Order createOrder(User user, Brand brand,Delivery delivery, OrderItem... orderItems) {
         Order order = new Order();
         order.setMember(user);
         order.setDelivery(delivery);
+        order.setBrand(brand);
         for (OrderItem orderItem: orderItems) {
             order.addOrderItem(orderItem);
         }
@@ -75,7 +78,6 @@ public class Order {
             orderItem.cancel();
         }
     }
-
 
 	/**주문상품 전체 가격 조회**/
     public long getTotalPrice() {

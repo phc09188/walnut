@@ -35,8 +35,11 @@ public class ItemController {
         if(optionalItem.isEmpty()){
             throw new ItemException(ErrorCode.ITEM_NOT_FOUND);
         }
+        Item item = optionalItem.get();
+        item.setViewCount(item.getViewCount()+1);
+        itemRepository.save(item);
         String cartOrBuy = "";
-        model.addAttribute("item", optionalItem.get());
+        model.addAttribute("item",item);
         model.addAttribute("cartOrBuy", cartOrBuy);
         return "/item/info";
     }

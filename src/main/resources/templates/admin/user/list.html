@@ -8,7 +8,42 @@
 <h1>유저 리스트 </h1>
 <div th:replace="/fragments/layout.html :: fragment-admin-body-menu"></div>
 
-
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>유저이름</th>
+            <th>아이디</th>
+            <th>유저 분류</th>
+            <th>가입일</th>
+            <th>계정상태</th>
+            <th>.</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="x : ${users}">
+            <form action="/admin/member/stateUpdate" method="post">
+            <input type="hidden" name="userId" th:value="${x.userId}"/>
+            <td><p th:text="${x.userName}"></p> </td>
+            <td><p th:text="${x.userId}"></p> </td>
+            <td><p th:text="${x.userClassification}"></p></td>
+            <td><p th:text="${x.userRegDt}"></p> </td>
+            <td>
+                <span th:text="${x.userStatus}"></span>
+                <select name="userStatus" th:selected="${x.userStatus}" required>
+                    <option th:if="${x.userStatus} != 'REQ'" value="REQ">REQ</option>
+                    <option th:if="${x.userStatus} != 'ING'" value="ING">ING</option>
+                    <option th:if="${x.userStatus} != 'STOP'" value="STOP">STOP</option>
+                    <option th:if="${x.userStatus} != 'WITHDRAW'" value="WITHDRAW">WITHDRAW</option>
+                </select>
+            </td>
+            <td>
+                <button type="submit">변경 </button>
+            </td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
 
 </div>
 </body>

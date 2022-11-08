@@ -3,10 +3,7 @@ package com.shopper.walnut.walnut.service;
 import com.shopper.walnut.walnut.model.entity.*;
 import com.shopper.walnut.walnut.model.input.OrderInput;
 import com.shopper.walnut.walnut.model.status.OrderStatus;
-import com.shopper.walnut.walnut.repository.CartRepository;
-import com.shopper.walnut.walnut.repository.ItemRepository;
-import com.shopper.walnut.walnut.repository.OrderRepository;
-import com.shopper.walnut.walnut.repository.UserRepository;
+import com.shopper.walnut.walnut.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,21 +17,24 @@ public class OrderService {
     private final ItemRepository itemRepository;
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
+    private final BrandRepository brandRepository;
     /**주문 + 장바구니 편집**/
     public Long order(String userId, Long itemId, Long count, Long point ,Long payAmount) {
 
         User member = userRepository.findById(userId).get();
         Item item = itemRepository.findById(itemId).get();
+        Brand brand = brandRepository.findById(item.getBrandId()).get();
         member.setUserPoint(member.getUserPoint() - point);
         member.setUserCache(member.getUserCache() - payAmount);
         item.setTotalTake(payAmount);
+        item.setPayAmount(item.getPayAmount()+count);
 
         Delivery delivery = new Delivery();
         delivery.setAddress(member.getAddress());
 
         OrderItem orderItem = OrderItem.createOrderItem(item, item.getPrice(), count);
 
-        Order order = Order.createOrder(member, delivery, orderItem);
+        Order order = Order.createOrder(member,brand, delivery, orderItem);
         orderRepository.save(order);
         userRepository.save(member);
         Optional<Cart> optionalCart = cartRepository.findByUserAndItem(member,item);

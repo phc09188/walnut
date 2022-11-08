@@ -1,12 +1,10 @@
 package com.shopper.walnut.walnut.controller;
 
+import com.shopper.walnut.walnut.exception.OrderException;
 import com.shopper.walnut.walnut.exception.PayException;
 import com.shopper.walnut.walnut.exception.UserException;
 import com.shopper.walnut.walnut.exception.error.ErrorCode;
-import com.shopper.walnut.walnut.model.entity.Cart;
-import com.shopper.walnut.walnut.model.entity.Item;
-import com.shopper.walnut.walnut.model.entity.Order;
-import com.shopper.walnut.walnut.model.entity.User;
+import com.shopper.walnut.walnut.model.entity.*;
 import com.shopper.walnut.walnut.model.input.OrderInput;
 import com.shopper.walnut.walnut.model.status.ItemStatus;
 import com.shopper.walnut.walnut.repository.CartRepository;
@@ -52,6 +50,7 @@ public class OrderController {
             return "/order/payment";
         }else{
             Cart cart = new Cart(user, item);
+            cart.setCnt(itemCnt);
             cartRepository.save(cart);
             return "redirect:/";
         }
@@ -79,15 +78,21 @@ public class OrderController {
         } catch (Exception e) {
             return "redirect:/common/error";
         }
-        return "redirect:/order/orders";
+        return "redirect:/user/orderList";
     }
-    /** 유저 주문목록 조회**/
-    @GetMapping("/orders")
-    public String orderList(@AuthenticationPrincipal org.springframework.security.core.userdetails.User logInUser
-            , Model model){
-//        User user = userRepository.findById(logInUser.getUsername()).get();
-//        List<Order> orders = orderRepository.findAllByUser(user);
-//        model.addAttribute("orders", orders);
-        return "/order/list";
+
+
+    /** 주문 삭제**/
+    @PostMapping("/delete.do")
+    public String deleteOrder(Long orderId){
+        Optional<Order> optionalOrder =  orderRepository.findById(orderId);
+        if(optionalOrder.isEmpty()){
+            throw new OrderException(ErrorCode.ORDER_NOT_FOUND);
+        }
+        orderRepository.delete(optionalOrder.get());
+        return "redirect:/user/orderList";
     }
+
+
+
 }

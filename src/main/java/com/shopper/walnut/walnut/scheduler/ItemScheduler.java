@@ -66,6 +66,7 @@ public class ItemScheduler {
             if(item.getCnt() != brandItem.getCnt()){
                 brandItem.setCnt(item.getCnt());
                 brandItem.setTotalTake(item.getTotalTake());
+                brandItem.setPayAmount(item.getPayAmount());
                 brandItem.setSaleStatus(item.getSaleStatus());
                 if(item.getSaleStatus() != ItemStatus.ITEM_STATUS_ING){
                     brandService.sendEmail(brandItem);

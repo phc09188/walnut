@@ -18,6 +18,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,5 +51,11 @@ public class BrandItemService {
     }
 
 
-
+    public long findTotalAmount(List<BrandItem> items) {
+        long amount = 0;
+        for(BrandItem x : items){
+            amount += x.getTotalTake();
+        }
+        return amount;
+    }
 }

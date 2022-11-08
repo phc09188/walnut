@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>orderList</title>
+</head>
+<body>
+<div class="container">
+    <table>
+        <thead>
+        <tr>
+            <th>주문번호</th>
+            <th>주문 대표 물품</th>
+            <th>주소</th>
+            <th>배송 상태</th>
+            <th>취소</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="x : ${orders}">
+            <form th:action="@{/order/delete.do}" method="post">
+                <td><p th:text="${x.orderId}"></p><input type="hidden" name="orderId" th:value="${x.orderId}"/> </td>
+                <td><p th:text="${x.orderItems.get(0).getItem().itemName}"></p></td>
+                <td><p th:text="${x.delivery.address.totalAddress()}"></p></td>
+                <td><p th:text="${x.delivery.status}"></p> </td>
+                <td>
+                    <button type="submit">취소</button>
+                </td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

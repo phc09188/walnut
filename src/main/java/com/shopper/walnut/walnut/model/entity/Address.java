@@ -20,4 +20,7 @@ public class Address {
         this.streetAdr = streetAdr;
         this.detailAdr = detailAdr;
     }
+    public String totalAddress(){
+        return "우편번호: " + this.zipCode + " 도로명주소: " + this.streetAdr + " 상세주소: " + this.detailAdr;
+    }
 }

@@ -8,9 +8,26 @@
 <h1>매출 확인 </h1>
 <div th:replace="/fragments/layout.html :: fragment-brand-body-menu"></div>
 
-
-
-
+<div>
+    <span>총 매출: <p th:text="${total}"></p></span>
+</div>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>상품 이름</th>
+            <th>판매량</th>
+            <th>수익</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="x : ${items}">
+            <td><p th:text="${x.itemName}"></p> </td>
+            <td><p th:text="${x.payAmount}"></p> </td>
+            <td><p th:text="${x.totalTake}"></p></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

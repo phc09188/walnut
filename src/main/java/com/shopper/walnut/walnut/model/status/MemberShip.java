@@ -1,14 +1,15 @@
 package com.shopper.walnut.walnut.model.status;
 
-public enum OrderStatus {
-    ORDER("ORDER"),
-    CANCEL("CANCEL");
-
+public enum MemberShip {
+    BRONZE("BRONZE"),
+    SILVER("SILVER"),
+    GOLD("GOLD"),
+    PLATINUM("PLATINUM"),
+    DIAMOND("DIAMOND");
     private String value;
-    OrderStatus(String value) {
+    MemberShip(String value) {
         this.value = value;
     }
-
     public String getKey() {
         return name();
     }

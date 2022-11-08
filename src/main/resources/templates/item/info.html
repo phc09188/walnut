@@ -8,7 +8,7 @@
 <div class="itemInfo">
   <table>
     <tbody>
-    <form action="/item/payment" method="get" >
+    <form action="/order/payment" method="get" >
       <input name="itemId" type="hidden" th:value="${item.itemId}"/>
       <tr>
         <th>상품 명</th>
@@ -42,12 +42,13 @@
         <th>상품 구매</th>
         <td>
           <span>
-            <button type="submit">
-              <input type="hidden" name="type" value="cart"/>장바구니
+            <button name="buy" type="submit" th:value="${cartOrBuy.equals('buy')}">
+
+              장바구니
             </button>
             |
-            <button  type="submit">
-              <input type="hidden" name="type" value="buy"/>구매
+            <button  name="buy" type="submit" th:value="${!cartOrBuy.equals('buy')}">
+              구매
             </button>
           </span>
         </td>

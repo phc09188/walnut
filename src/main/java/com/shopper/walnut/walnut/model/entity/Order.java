@@ -30,29 +30,36 @@ public class Order {
     @JoinColumn(name = "deliveryId")
     private Delivery delivery;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "brandId")
+    private Brand brand;
+
     private LocalDateTime orderDt;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문상태 [ORDER, CANCEL]
 
-
     public void setMember(User user) {
         this.user = user;
         user.getOrders().add(this);
     }
+
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
         orderItem.setOrder(this);
     }
+
     public void setDelivery(Delivery delivery) {
         this.delivery = delivery;
         delivery.setOrder(this);
     }
-    //==생성 메서드==//
-    public static Order createOrder(User user, Delivery delivery, OrderItem... orderItems) {
+
+    /**생성 메서드**/
+    public static Order createOrder(User user, Brand brand,Delivery delivery, OrderItem... orderItems) {
         Order order = new Order();
         order.setMember(user);
         order.setDelivery(delivery);
+        order.setBrand(brand);
         for (OrderItem orderItem: orderItems) {
             order.addOrderItem(orderItem);
         }
@@ -61,7 +68,6 @@ public class Order {
         return order;
     }
 
-    //==비지니스 로직==//
 	/**주문 취소**/
     public void cancel() {
         if (delivery.getStatus() == DeliveryStatus.COMPLETE) {
@@ -73,10 +79,7 @@ public class Order {
         }
     }
 
-    //==조회 로직==//
-	/*
-	주문상품 전체 가격 조회
-	*/
+	/**주문상품 전체 가격 조회**/
     public long getTotalPrice() {
         return orderItems.stream()
                 .mapToLong(OrderItem::getTotalPrice)

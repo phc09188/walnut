@@ -3,6 +3,8 @@ package com.shopper.walnut.walnut.model.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,6 +19,15 @@ public class Cart {
     @ManyToOne()
     @JoinColumn(name="userId", nullable = false)
     public User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "itemId")
+    private Item item;
+    private long cnt;
 
 
+    //생성자
+    public Cart(User user, Item item) {
+        this.user = user;
+        this.item = item;
+    }
 }

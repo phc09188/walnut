@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>MyPage</title>
+</head>
+<body>
+<div th:replace="/fragments/layout.html::fragment-mypage-body-menu"></div>
+
+<div>
+    <form th:action="@{/user/cacheUp}" method="post">
+        <table>
+            <input type="hidden" name="userId" th:value="${user.userId}"/>
+            <thead>
+            <tr>
+                <th>잔여 캐시</th>
+                <th>충전 금액</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><p th:text="${user.userCache}"></td>
+                <td><input type="number" name="cache" value="cache" /></td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="submit">충전</button>
+    </form>
+</div>
+</body>
+</html>

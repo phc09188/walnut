@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>orderList</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+
+            $('#selectAll').on('click', function() {
+
+                var checked = $(this).is(':checked');
+
+
+                $('#dataList input[type=checkbox]').each(function(k, v) {
+                    $(this).prop('checked', checked);
+                });
+
+
+            });
+
+            $('#deleteButton').on('click', function() {
+
+                var $checked = $('#dataList input[type=checkbox]:checked');
+                if ($checked.length < 1) {
+                    alert(' 삭제할 데이터를 선택해 주세요. ');
+                    return false;
+                }
+
+                if (!confirm(' 선택한 데이터를 삭제하시겠습니까? ')) {
+                    return false;
+                }
+
+                var idList = [];
+                $.each($checked, function(k, v) {
+                    idList.push($(this).val());
+                });
+
+                console.log(idList);
+                console.log(idList.join(','));
+
+                var $deleteForm = $('form[name=deleteForm]');
+                $deleteForm.find('input[name=idList]').val( idList.join(',') );
+                $deleteForm.submit();
+
+            });
+
+
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <table>
+        <thead>
+        <tr>
+            <th><input id="selectAll" type="checkbox"/></th>
+            <th>상품명</th>
+            <th>가격(할인가)</th>
+            <th>수량</th>
+            <th>취소</th>
+        </tr>
+        </thead>
+        <tbody id="dataList">
+        <tr th:if="${carts.size()>0}" th:each="x : ${carts}">
+            <td>
+                <input type="checkbox" th:value="${x.cartId}"/>
+            </td>
+            <td><p th:text="${x.item.itemName}"></p> </td>
+            <td><p th:text="${x.item.salePrice}"></p> </td>
+            <td><p th:text="${x.cnt}"></p> </td>
+            <td>
+                <button type="submit"></button>
+            </td>
+        </tr>
+        <tr th:if="${carts.size()==0}">
+            <p>장바구니에 아무 것도 없습니다.</p>
+        </tr>
+        </tbody>
+    </table>
+    <div class="buttons">
+        <button id="deleteButton" type="button"> 선택 삭제 </button>
+    </div>
+</div>
+
+
+<form name="deleteForm" method="post" action="/user/cart/delete.do">
+    <input type="hidden" name="idList"/>
+</form>
+
+</body>
+</html>

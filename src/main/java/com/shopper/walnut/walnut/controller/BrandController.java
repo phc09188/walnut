@@ -4,16 +4,16 @@ import com.shopper.walnut.walnut.exception.BrandRegisterException;
 import com.shopper.walnut.walnut.exception.error.ErrorCode;
 import com.shopper.walnut.walnut.model.dto.BrandDto;
 import com.shopper.walnut.walnut.model.dto.BrandItemDto;
-import com.shopper.walnut.walnut.model.entity.Brand;
-import com.shopper.walnut.walnut.model.entity.BrandItem;
-import com.shopper.walnut.walnut.model.entity.Category;
+import com.shopper.walnut.walnut.model.entity.*;
 import com.shopper.walnut.walnut.model.input.BrandInput;
 import com.shopper.walnut.walnut.model.input.BrandItemInput;
+import com.shopper.walnut.walnut.model.input.OrderInput;
 import com.shopper.walnut.walnut.repository.BrandItemRepository;
 import com.shopper.walnut.walnut.repository.BrandRepository;
 import com.shopper.walnut.walnut.service.BrandItemService;
 import com.shopper.walnut.walnut.service.BrandSignUpService;
 import com.shopper.walnut.walnut.service.CategoryService;
+import com.shopper.walnut.walnut.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,9 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,15 +37,17 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
+@RequestMapping("/brand")
 public class BrandController {
     private final BrandSignUpService signUpService;
     private final BrandRepository brandRepository;
     private final BrandItemRepository brandItemRepository;
     private final BrandItemService brandItemService;
     private final CategoryService categoryService;
+    private final OrderService orderService;
 
     /** 메인페이지 **/
-    @GetMapping("/brand/main/detail.do")
+    @GetMapping("/main/detail.do")
     public String brandMain(Model model, @AuthenticationPrincipal User user){
         String brandLogInId = user.getUsername();
         Optional<Brand> optionalBrand = brandRepository.findByBrandLoginId(brandLogInId);
@@ -60,14 +60,14 @@ public class BrandController {
         return "brand/main/detail";
 
     }
-    /** 등록 **/
-    @GetMapping("/brand/register")
+    /** 입점 신청 폼 **/
+    @GetMapping("/register")
     public String add(Model model) {
         model.addAttribute("brandForm",new BrandDto());
         return "brand/add";
     }
-
-    @PostMapping("/brand/register.do")
+    /** 입점 신청 **/
+    @PostMapping("/register.do")
     public String addSubmit(Model model, HttpServletRequest request
             , MultipartFile file
             , @Validated BrandInput parameter) {
@@ -141,7 +141,7 @@ public class BrandController {
         return new String[]{newFilename, newUrlFilename};
     }
     /** 아이템 리스트 출력 **/
-    @GetMapping("/brand/main/item.do")
+    @GetMapping("/main/item.do")
     public String brandItemList(Model model, @AuthenticationPrincipal User user){
         Optional<Brand> brand = brandRepository.findByBrandLoginId(user.getUsername());
         List<BrandItem> brandItemList = brandItemRepository.findAllByBrand(brand.get());
@@ -151,7 +151,7 @@ public class BrandController {
     }
 
     /** 아이템 추가 or Edit **/
-    @GetMapping(value = {"/brand/main/item-add.do", "/brand/main/item-edit.do"})
+    @GetMapping(value = {"/main/item-add.do", "/main/item-edit.do"})
     public String itemAddForm(HttpServletRequest req,Model model, BrandItemDto dto){
         boolean isEdit = req.getRequestURI().contains("/item-edit");
         BrandItemDto dto2 = new BrandItemDto();
@@ -170,8 +170,8 @@ public class BrandController {
 
         return "brand/main/item-add";
     }
-
-    @PostMapping("/brand/main/item/add.do")
+    /**상품 등록**/
+    @PostMapping("/main/item/add.do")
     public String itemAdd(@AuthenticationPrincipal User user,
                           MultipartFile file,
                           BrandItemInput parameter){
@@ -204,7 +204,26 @@ public class BrandController {
         Optional<Brand> optionalBrand = brandRepository.findByBrandLoginId(user.getUsername());
         brandItemService.add(parameter, optionalBrand.get());
         return "redirect:/brand/main/item.do";
+    }
+    /**주문리스트**/
+    @GetMapping("/main/orderList")
+    public String orderList(@AuthenticationPrincipal User logInUser
+            ,@ModelAttribute("orderInput") OrderInput orderInput, Model model){
+        Brand brand = brandRepository.findByBrandLoginId(logInUser.getUsername()).get();
+        List<Order> orders = orderService.findAllByString(orderInput, brand);
+        model.addAttribute("orders", orders);
+        return "/brand/main/orderList";
+    }
 
+    /** 매출 확인 **/
+    @GetMapping("/main/account.do")
+    public String account(@AuthenticationPrincipal User logInUser, Model model){
+        Brand brand = brandRepository.findByBrandLoginId(logInUser.getUsername()).get();
+        List<BrandItem> items = brandItemRepository.findAllByBrand(brand);
+        long amount =  brandItemService.findTotalAmount(items);
+        model.addAttribute("items", items);
+        model.addAttribute("total", amount);
+        return "/brand/main/account";
     }
 
 

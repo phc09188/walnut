@@ -12,7 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QnaInput {
-    private String userId;
 
     private String subject;
     private String content;

@@ -37,4 +37,5 @@ public class QnA {
         this.content = content;
         this.status = QnaStatus.ING;
     }
+
 }

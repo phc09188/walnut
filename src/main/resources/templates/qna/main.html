@@ -1,11 +1,47 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="UTF-8">
-  <title> </title>
+  <title>QnA</title>
 </head>
 <body>
 
+<div class="types">
+  <a th:href="@{/qna/main/info(type=${types.get(0)})}" th:text="${types.get(0)}"></a>
+  |
+  <a th:href="@{/qna/main/info(type=${types.get(1)})}" th:text="${types.get(1)}"></a>
+  |
+  <a th:href="@{/qna/main/info(type=${types.get(2)})}" th:text="${types.get(2)}"></a>
+  |
+  <a th:href="@{/qna/main/info(type=${types.get(3)})}" th:text="${types.get(3)}"></a>
+  </br>
+  </hr>
+</div>
+<div>
+  <table>
+    <thead>
+    <tr>
+      <th>질문 유형</th>
+      <th>질문 내용</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="x : ${qnas}">
+      <td>
+        <p th:text="${x.type}"></p>
+      </td>
+      <td>
+        <a th:href="@{/qna/detail(qnaId =${x.qnaId})}"><p th:text="${x.subject}"></p> </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  </br>
+  </hr>
+</div>
+<div>
+  <a href="/qna/add">질문하기</a>
 
+</div>
 </body>
 </html>

@@ -1,18 +1,20 @@
 package com.shopper.walnut.walnut.controller;
 
 import com.shopper.walnut.walnut.exception.QnAException;
+import com.shopper.walnut.walnut.exception.UserException;
 import com.shopper.walnut.walnut.exception.error.ErrorCode;
 import com.shopper.walnut.walnut.model.entity.QnA;
 import com.shopper.walnut.walnut.model.input.QnaInput;
+import com.shopper.walnut.walnut.model.type.QnaType;
 import com.shopper.walnut.walnut.repository.QnARepository;
+import com.shopper.walnut.walnut.repository.UserRepository;
 import com.shopper.walnut.walnut.service.QnAService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,15 +25,32 @@ import java.util.Optional;
 public class QnAController {
     private final QnAService qnAService;
     private final QnARepository qnARepository;
+    private final UserRepository userRepository;
 
-    /** QNA리스트 & 메잍페이지 **/
+    /** QNA리스트 & 메인페이지 **/
+    @GetMapping("/main/info")
+    public String qnaMain(Model model, @RequestParam QnaType type){
+        List<QnA> qnas;
+        if(type == null) {
+            qnas = qnAService.searchMain();
+        }else{
+            qnas = qnAService.typeMain(type);
+        }
+        model.addAttribute("types", qnAService.getList());
+        model.addAttribute("qnas", qnas);
+        return "/qna/main";
+    }
+
+    /** QNA리스트 & 메인페이지 **/
     @GetMapping("/main")
     public String qnaMain(Model model){
         List<QnA> qnas = qnAService.searchMain();
 
+        model.addAttribute("types", qnAService.getList());
         model.addAttribute("qnas", qnas);
         return "/qna/main";
     }
+
     /** qna 정보 **/
     @GetMapping("/detail")
     public String qnaDetail(Model model, @RequestParam long qnaId){
@@ -45,14 +64,18 @@ public class QnAController {
     }
     /** qna 추가 폼 **/
     @GetMapping("/add")
-    public String qnaAddForm(){
-
+    public String qnaAddForm(@ModelAttribute("qnaInput") QnaInput qnaInput, Model model){
+        model.addAttribute("types", qnAService.getList());
         return "/qna/addForm";
     }
     /** qna 추가 **/
     @PostMapping("/add.do")
-    public String qnaAdd(QnaInput input){
-        qnAService.add(input);
+    public String qnaAdd(QnaInput input, @AuthenticationPrincipal User logInUser){
+        Optional<com.shopper.walnut.walnut.model.entity.User> optionalUser = userRepository.findById(logInUser.getUsername());
+        if(optionalUser.isEmpty()){
+            throw new UserException(ErrorCode.USER_NOT_FOUND);
+        }
+        qnAService.add(optionalUser.get(),input);
 
         return "redirect:/qna/main";
     }

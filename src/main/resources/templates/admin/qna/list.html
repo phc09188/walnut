@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>QnaList</title>
+</head>
+<body>
+<div>
+  <table>
+    <thead>
+    <tr>
+      <th>QnA번호</th>
+      <th>제목</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr th:each="x : ${list}">
+        <form method="post" th:action="@{/admin/qna/detail(qnaId=${x.qnaId})}">
+          <td><p th:text="${x.qnaId}"></p> </td>
+          <td><p th:text="${x.subject}"></p></td>
+        </form>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

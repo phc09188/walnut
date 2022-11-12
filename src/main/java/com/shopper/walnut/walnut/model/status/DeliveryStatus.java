@@ -1,5 +1,21 @@
 package com.shopper.walnut.walnut.model.status;
 
 public enum DeliveryStatus {
-    READY, COMPLETE, CANCEL
+    READY("READY"),
+    DELIVERY_START("DELIVERY_START"),
+    COMPLETE("COMPLETE"),
+    CANCEL("CANCEL");
+
+    private String value;
+    DeliveryStatus(String value) {
+        this.value = value;
+    }
+
+    public String getKey() {
+        return name();
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

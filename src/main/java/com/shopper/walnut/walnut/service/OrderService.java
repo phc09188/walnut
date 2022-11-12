@@ -2,6 +2,7 @@ package com.shopper.walnut.walnut.service;
 
 import com.shopper.walnut.walnut.model.entity.*;
 import com.shopper.walnut.walnut.model.input.OrderInput;
+import com.shopper.walnut.walnut.model.status.DeliveryStatus;
 import com.shopper.walnut.walnut.model.status.OrderStatus;
 import com.shopper.walnut.walnut.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class OrderService {
 
         Delivery delivery = new Delivery();
         delivery.setAddress(member.getAddress());
+        delivery.setStatus(DeliveryStatus.READY);
 
         OrderItem orderItem = OrderItem.createOrderItem(item, item.getPrice(), count);
 
@@ -64,4 +66,5 @@ public class OrderService {
             return orderRepository.findAllByUserAndStatusAndBrand(user, orderSearch.getOrderStatus(), brand);
         }
     }
+
 }

@@ -6,13 +6,16 @@ import com.shopper.walnut.walnut.model.dto.BrandDto;
 import com.shopper.walnut.walnut.model.dto.CategoryDto;
 import com.shopper.walnut.walnut.model.entity.Brand;
 import com.shopper.walnut.walnut.model.entity.Category;
+import com.shopper.walnut.walnut.model.entity.QnA;
 import com.shopper.walnut.walnut.model.entity.User;
 import com.shopper.walnut.walnut.model.status.BrandStatus;
 import com.shopper.walnut.walnut.model.input.CategoryInput;
 import com.shopper.walnut.walnut.model.status.UserStatus;
 import com.shopper.walnut.walnut.repository.BrandRepository;
 import com.shopper.walnut.walnut.repository.CategoryRepository;
+import com.shopper.walnut.walnut.repository.QnARepository;
 import com.shopper.walnut.walnut.repository.UserRepository;
+import com.shopper.walnut.walnut.service.QnAService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -31,9 +33,11 @@ import java.util.Optional;
 @RequestMapping("/admin")
 @Controller
 public class AdminController {
+    private final QnAService qnAService;
     private final BrandRepository brandRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final QnARepository qnARepository;
 
     /**관리자 메인**/
     @GetMapping("/main.do")
@@ -71,7 +75,7 @@ public class AdminController {
     @PostMapping("/approve/start.do")
     public String approve(BrandDto dto){
         Optional<Brand> optionalBrand = brandRepository.findByBrandName(dto.getBrandName());
-        if(!optionalBrand.isPresent()){
+        if(optionalBrand.isEmpty()){
             throw new RuntimeException("브랜드가 없습니다.");
         }
         Brand brand = optionalBrand.get();
@@ -91,7 +95,7 @@ public class AdminController {
     @PostMapping("/category/delete.do")
     public String deleteCategory(CategoryDto categoryDto){
         Optional<Category> optionalCategory = categoryRepository.findById(categoryDto.getSubCategoryName());
-        if(!optionalCategory.isPresent()){
+        if(optionalCategory.isEmpty()){
             throw new CategoryException(ErrorCode.CATEGORY_NOT_EXIST);
         }
         Category category = optionalCategory.get();
@@ -107,7 +111,7 @@ public class AdminController {
 
     /**카테고리 추가**/
     @PostMapping("/category/addCategory.do")
-    public String categoryAdd(Model model, HttpServletRequest request, @Validated CategoryInput categoryDto){
+    public String categoryAdd(@Validated CategoryInput categoryDto){
         Optional<Category> categoryOptional = categoryRepository.findById(categoryDto.getSubCategoryName());
         if(categoryOptional.isPresent()){
             throw new CategoryException(ErrorCode.CATEGORY_ALREADY_EXIST);
@@ -137,5 +141,38 @@ public class AdminController {
         userRepository.save(user);
 
         return "redirect:/admin/user/list.do";
+    }
+
+    /** 미승인 qna 리스트**/
+    @GetMapping("/qna/list.do")
+    public String qnaList(Model model){
+        List<QnA> list =  qnAService.getNotAnswer();
+        model.addAttribute("list", list);
+
+        return "/admin/qna/list";
+    }
+    /** 답변 폼**/
+    @GetMapping("/qna/detail")
+    public String qnaList(@RequestParam long qnaId, Model model){
+        Optional<QnA> optionalQnA = qnARepository.findById(qnaId);
+        if(optionalQnA.isEmpty()){
+            throw new RuntimeException("QNA가 없습니다.");
+        }
+        QnA qna = optionalQnA.get();
+        model.addAttribute(qna);
+        return "/admin/qna/detail";
+    }
+
+    @PostMapping("/qna/submit")
+    public String qnaSubmit(@RequestParam String answer, @RequestParam long qnaId){
+        Optional<QnA> optionalQnA = qnARepository.findById(qnaId);
+        if(optionalQnA.isEmpty()){
+            throw new RuntimeException("QNA가 없습니다.");
+        }
+        QnA qna = optionalQnA.get();
+        qna.setAnswer(answer);
+        qnARepository.save(qna);
+
+        return "redirect:/admin/qna/list.do";
     }
 }

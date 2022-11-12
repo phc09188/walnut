@@ -30,23 +30,39 @@
         <th>대표상품 주문수량</th>
         <th>상태</th>
         <th>일시</th>
-        <th></th>
+        <th>배송 상태</th>
+        <th>삭제</th>
       </tr>
       </thead>
       <tbody>
       <tr th:each="order : ${orders}">
-        <td th:text="${order.orderId}"></td>
-        <td th:text="${order.user.userName}"></td>
-        <td th:text="${order.orderItems[0].item.itemName}"></td>
-        <td th:text="${order.orderItems[0].orderPrice}"></td>
-        <td th:text="${order.orderItems[0].count}"></td>
-        <td th:text="${order.status}"></td>
-        <td th:text="${order.orderDt}"></td>
-        <td>
-          <a th:if="${order.status.name() == 'ORDER'}" href="#"
-             th:href="'javascript:cancel('+${order.orderId}+')'"
-             class="btn btn-danger">CANCEL</a>
-        </td>
+        <form action="/brand/main/order/edit.do" method="post">
+          <input type="hidden" name="orderId" th:value="${order.orderId}"/>
+          <td th:text="${order.orderId}"></td>
+          <td th:text="${order.user.userName}"></td>
+          <td th:text="${order.orderItems[0].item.itemName}"></td>
+          <td th:text="${order.orderItems[0].orderPrice}"></td>
+          <td th:text="${order.orderItems[0].count}"></td>
+          <td th:text="${order.status}"></td>
+          <td th:text="${order.orderDt}"></td>
+          <td>
+            <select name="status" th:selected="${order.delivery.status}">
+              <option value="">배송상태</option>
+              <option th:each="status : ${T(com.shopper.walnut.walnut.model.status.DeliveryStatus).values()}"
+              th:value="${status}"
+              th:text="${status}"
+              name="status"></option>
+            </select>
+          </td>
+          <td>
+            <a th:if="${order.status.name() == 'ORDER'}" href="#"
+               th:href="'javascript:cancel('+${order.orderId}+')'"
+               class="btn btn-danger">주문 취소</a>
+          </td>
+          <td>
+            <button type="submit">상태 변경</button>
+          </td>
+        </form>
       </tr>
       </tbody>
     </table>
@@ -57,7 +73,7 @@
   function cancel(id) {
     var form = document.createElement("form");
     form.setAttribute("method", "post");
-    form.setAttribute("action", "/orders/" + id + "/cancel");
+    form.setAttribute("action", "/order/orders/" + id + "/cancel");
     document.body.appendChild(form);
     form.submit();
   }

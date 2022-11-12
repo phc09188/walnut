@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>QnaList</title>
+</head>
+<body>
+<table>
+    <tbody>
+    <form method="post" action="/admin/qna/submit">
+        <input type="hidden" th:value="${qnA.qnaId}"/>
+        <tr>
+            <th>제목</th>
+            <td><p th:text="${qnA.subject}"></p></td>
+        </tr>
+        <tr>
+            <th>내용</th>
+            <td><p th:text="${qnA.content}"></p> </td>
+        </tr>
+        <tr>
+            <th>답변</th>
+            <td>
+                <input type="text" name="answer"/>
+            </td>
+        </tr>
+        <button type="submit">작성 완료</button>
+    </form>
+    </tbody>
+</table>
+</body>
+</html>

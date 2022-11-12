@@ -1,12 +1,13 @@
 package com.shopper.walnut.walnut.model.status;
 
-public enum OrderStatus {
-    ORDER("ORDER"),
+public enum QnaStatus {
+    ING("ING"),
     COMPLETE("COMPLETE"),
-    CANCEL("CANCEL");
+    MAIN("MAIN"),
+    DENIED("DENIED");
 
     private String value;
-    OrderStatus(String value) {
+    QnaStatus(String value) {
         this.value = value;
     }
 

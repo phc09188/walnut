@@ -5,7 +5,6 @@ import com.shopper.walnut.walnut.exception.PayException;
 import com.shopper.walnut.walnut.exception.UserException;
 import com.shopper.walnut.walnut.exception.error.ErrorCode;
 import com.shopper.walnut.walnut.model.entity.*;
-import com.shopper.walnut.walnut.model.input.OrderInput;
 import com.shopper.walnut.walnut.model.status.ItemStatus;
 import com.shopper.walnut.walnut.repository.CartRepository;
 import com.shopper.walnut.walnut.repository.ItemRepository;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -91,6 +89,31 @@ public class OrderController {
         }
         orderRepository.delete(optionalOrder.get());
         return "redirect:/user/orderList";
+    }
+
+    /** 브랜드 자체 주문 취소 **/
+    @PostMapping("/orders/{orderId}/cancel")
+    public String cancelOrder(@PathVariable("orderId") Long orderId) {
+        orderService.cancelOrder(orderId);
+        return "redirect:/brand/main/orderList";
+    }
+    /** 주소 변경 폼 **/
+    @GetMapping("/editAddress")
+    public String editAddressForm(@RequestParam Long orderId, Model model){
+        Order order =  orderRepository.findById(orderId).get();
+
+        model.addAttribute("order", order);
+
+        return "/order/editAddress";
+    }
+    /** 배송지 변경**/
+    @PostMapping("/editAddress.do")
+    public String editAddress(@RequestParam Long orderId, Address address){
+        Order order = orderRepository.findById(orderId).get();
+        order.getDelivery().setAddress(address);
+        orderRepository.save(order);
+
+        return "redirect:/orderList";
     }
 
 

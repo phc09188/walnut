@@ -1,0 +1,33 @@
+\<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>MyPage</title>
+</head>
+<body>
+<div th:replace="/fragments/layout.html::fragment-mypage-body-menu"></div>
+
+<table>
+    <tbody>
+    <tr>
+        <th>맴버쉽</th>
+        <td><p th:text="${user.memberShip.getKey()}"></p></td>
+    </tr>
+    <tr>
+        <th>다음 등급까지 남은 금액</th>
+        <td><p th:text="${memberShip}"></p></td>
+    </tr>
+    <tr>
+        <th> 캐쉬</th>
+        <td><p th:text="${user.userCache}"></p></td>
+    </tr>
+    <tr>
+        <th> 포인트</th>
+        <td><p th:text="${user.userPoint}"></p></td>
+    </tr>
+    </tbody>
+</table>
+
+
+</body>
+</html>

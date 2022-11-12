@@ -8,12 +8,12 @@ import com.shopper.walnut.walnut.model.entity.*;
 import com.shopper.walnut.walnut.model.input.BrandInput;
 import com.shopper.walnut.walnut.model.input.BrandItemInput;
 import com.shopper.walnut.walnut.model.input.OrderInput;
+import com.shopper.walnut.walnut.model.status.DeliveryStatus;
+import com.shopper.walnut.walnut.model.status.OrderStatus;
 import com.shopper.walnut.walnut.repository.BrandItemRepository;
 import com.shopper.walnut.walnut.repository.BrandRepository;
-import com.shopper.walnut.walnut.service.BrandItemService;
-import com.shopper.walnut.walnut.service.BrandSignUpService;
-import com.shopper.walnut.walnut.service.CategoryService;
-import com.shopper.walnut.walnut.service.OrderService;
+import com.shopper.walnut.walnut.repository.OrderRepository;
+import com.shopper.walnut.walnut.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,19 +40,22 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/brand")
 public class BrandController {
-    private final BrandSignUpService signUpService;
+    private final OrderRepository orderRepository;
     private final BrandRepository brandRepository;
     private final BrandItemRepository brandItemRepository;
+
+    private final BrandSignUpService signUpService;
     private final BrandItemService brandItemService;
     private final CategoryService categoryService;
     private final OrderService orderService;
+    private final DeliveryService deliveryService;
 
     /** 메인페이지 **/
     @GetMapping("/main/detail.do")
     public String brandMain(Model model, @AuthenticationPrincipal User user){
         String brandLogInId = user.getUsername();
         Optional<Brand> optionalBrand = brandRepository.findByBrandLoginId(brandLogInId);
-        if(!optionalBrand.isPresent()){
+        if(optionalBrand.isEmpty()){
             throw new BrandRegisterException(ErrorCode.BRAND_NOT_FOUND);
         }
         Brand brand = optionalBrand.get();
@@ -68,8 +72,7 @@ public class BrandController {
     }
     /** 입점 신청 **/
     @PostMapping("/register.do")
-    public String addSubmit(Model model, HttpServletRequest request
-            , MultipartFile file
+    public String addSubmit(MultipartFile file
             , @Validated BrandInput parameter) {
 
         String saveFilename = "";
@@ -225,6 +228,23 @@ public class BrandController {
         model.addAttribute("total", amount);
         return "/brand/main/account";
     }
+
+    /** 배송 상태 변경 **/
+    @PostMapping("/main/order/edit.do")
+    public String deliveryEdit(@RequestParam Long orderId, @RequestParam DeliveryStatus status){
+        Order order = orderRepository.findById(orderId).get();
+//        DeliveryStatus deliveryStatus =  orderService.findDeliveryStatus(status);
+        order.getDelivery().setStatus(status);
+        if(status == DeliveryStatus.COMPLETE){
+            order.setStatus(OrderStatus.COMPLETE);
+            order.getDelivery().setDeliverySuccessDt(LocalDateTime.now());
+        }
+        orderRepository.save(order);
+
+        return "redirect:/brand/main/orderList";
+    }
+
+
 
 
 

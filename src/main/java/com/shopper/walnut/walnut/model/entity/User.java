@@ -40,6 +40,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Cart> cartList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<QnA> qnAList = new ArrayList<>();
+
 
 //    @Convert(converter = BooleanToYNConverter.class)
     @Column(nullable = false, columnDefinition = "TINYINT(1)")

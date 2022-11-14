@@ -96,7 +96,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
 
     }
-
+    /** 맴버쉽 상승에 필요한 금액 **/
     public String memberShip(User user){
         long amount = user.getPayAmount();
         if(amount>=0 && amount<50000){

@@ -21,7 +21,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BrandItemService {
     private final BrandItemRepository brandItemRepository;
-    private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
 
 

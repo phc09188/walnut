@@ -18,9 +18,9 @@ public class DeliveryService {
 
     /** 배송 상태 확인 **/
     public DeliveryStatus findDeliveryStatus(String status) {
-        if(status == DeliveryStatus.READY.getKey()){
+        if(status.equals(DeliveryStatus.READY.getKey())){
             return DeliveryStatus.READY;
-        }else if(status == DeliveryStatus.COMPLETE.getKey()){
+        }else if(status.equals(DeliveryStatus.COMPLETE.getKey())){
             return DeliveryStatus.COMPLETE;
         }else{
             return DeliveryStatus.CANCEL;

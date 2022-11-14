@@ -1,5 +1,8 @@
 package com.shopper.walnut.walnut.service;
 
+import com.shopper.walnut.walnut.model.entity.Cart;
+import com.shopper.walnut.walnut.model.entity.Item;
+import com.shopper.walnut.walnut.model.entity.User;
 import com.shopper.walnut.walnut.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,5 +27,11 @@ public class CartService {
         }
 
         return true;
+    }
+
+    public void add(User user, Item item, Long itemCnt) {
+        Cart cart = new Cart(user, item);
+        cart.setCnt(itemCnt);
+        cartRepository.save(cart);
     }
 }

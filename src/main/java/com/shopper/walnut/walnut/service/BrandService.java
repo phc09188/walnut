@@ -20,7 +20,7 @@ public class BrandService {
     /** 브랜드 정보 수정 **/
     public boolean set(BrandInput parameter) {
         Optional<Brand> optionalBrand = repository.findById(parameter.getBrandId());
-        if(!optionalBrand.isPresent()){
+        if(optionalBrand.isEmpty()){
             return false;
         }
         Brand brand = optionalBrand.get();
@@ -37,7 +37,7 @@ public class BrandService {
     }
     /** 제고소진 및 상품 상태 변경시 이메일 보내기 **/
     public void sendEmail(BrandItem brandItem) {
-        if(brandItem.getSaleStatus() == ItemStatus.ITEM_STATUS_ING){
+        if(brandItem.getSaleStatus().equals(ItemStatus.ITEM_STATUS_ING)){
             return;
         }
         String email = brandItem.getBrand().getBrandEmail();

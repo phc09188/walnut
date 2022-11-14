@@ -7,8 +7,11 @@ import com.shopper.walnut.walnut.repository.CartRepository;
 import com.shopper.walnut.walnut.repository.ItemRepository;
 import com.shopper.walnut.walnut.repository.OrderRepository;
 import com.shopper.walnut.walnut.repository.UserRepository;
+import com.shopper.walnut.walnut.service.CartService;
 import com.shopper.walnut.walnut.service.OrderService;
+import com.shopper.walnut.walnut.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,8 +26,10 @@ public class OrderController {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final CartRepository cartRepository;
+    private final CartService cartService;
     private final OrderRepository orderRepository;
     private final OrderService orderService;
+    private final UserService userService;
     /**결제 정보**/
     @GetMapping("/payment")
     public String itemPayment(@AuthenticationPrincipal org.springframework.security.core.userdetails.User logInUser,
@@ -44,9 +49,7 @@ public class OrderController {
             model.addAttribute("user", optionalUser.get());
             return "/order/payment";
         }else{
-            Cart cart = new Cart(user, item);
-            cart.setCnt(itemCnt);
-            cartRepository.save(cart);
+            cartService.add(user, item, itemCnt);
             return "redirect:/";
         }
     }
@@ -70,6 +73,7 @@ public class OrderController {
         }
         try {
             orderService.order(user.getUserId(), itemId, itemCnt, userPoint, payAmount);
+            userService.userMemberShipUpdate(user,payAmount);
         } catch (Exception e) {
             return "redirect:/common/error";
         }
@@ -84,6 +88,8 @@ public class OrderController {
         if(optionalOrder.isEmpty()){
             throw new OrderNotFound();
         }
+        Order order = optionalOrder.get();
+        userService.userMemberShipUpdate(order.getUser(),order.getTotalPrice());
         orderRepository.delete(optionalOrder.get());
         return "redirect:/user/orderList";
     }
@@ -91,7 +97,11 @@ public class OrderController {
     /** 브랜드 자체 주문 취소 **/
     @PostMapping("/orders/{orderId}/cancel")
     public String cancelOrder(@PathVariable("orderId") Long orderId) {
-        orderService.cancelOrder(orderId);
+        Optional<Order> optional = orderRepository.findById(orderId);
+        if(optional.isEmpty()){
+            throw new OrderNotFound();
+        }
+        orderService.cancelOrder(optional.get());
         return "redirect:/brand/main/orderList";
     }
     /** 주소 변경 폼 **/

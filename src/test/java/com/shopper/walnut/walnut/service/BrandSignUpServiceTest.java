@@ -4,6 +4,7 @@ import com.shopper.walnut.walnut.model.input.BrandInput;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ class BrandSignUpServiceTest {
     @Autowired
     private BrandSignUpService service;
     @Test
+    @Transactional
     void brandRegister(){
         //given
         BrandInput input = BrandInput

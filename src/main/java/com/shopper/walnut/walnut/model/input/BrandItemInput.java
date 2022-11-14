@@ -14,6 +14,7 @@ import java.util.Random;
 public class BrandItemInput {
     private String itemName;
     private long price;
+    private long salePrice;
     private String itemInfo;
     private String saleStatus;
 
@@ -32,7 +33,7 @@ public class BrandItemInput {
                 .urlFileName(input.fileUrl)
                 .addDt(LocalDate.now())
                 .price(input.price)
-                .salePrice(input.price)
+                .salePrice(input.salePrice)
                 .itemInfo(input.itemInfo)
                 .viewCount(0)
                 .reviewCount(0)

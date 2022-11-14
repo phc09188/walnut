@@ -3,7 +3,6 @@ package com.shopper.walnut.walnut.service;
 import com.shopper.walnut.walnut.model.entity.*;
 import com.shopper.walnut.walnut.model.input.OrderInput;
 import com.shopper.walnut.walnut.model.status.DeliveryStatus;
-import com.shopper.walnut.walnut.model.status.OrderStatus;
 import com.shopper.walnut.walnut.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,9 +45,8 @@ public class OrderService {
         return order.getOrderId();
     }
     /**주문취소**/
-    public void cancelOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId).get();
-        order.cancel();
+    public void cancelOrder(Order order) {
+        orderRepository.delete(order);
     }
 
     /** OrderInput에 status와 이름을 입력받아 리스트 반환**/

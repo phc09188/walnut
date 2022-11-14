@@ -1,8 +1,8 @@
 package com.shopper.walnut.walnut.service;
 
-import com.shopper.walnut.walnut.exception.QnAException;
-import com.shopper.walnut.walnut.exception.UserException;
-import com.shopper.walnut.walnut.exception.error.ErrorCode;
+import com.shopper.walnut.walnut.exception.error.QnaAlreadyExist;
+import com.shopper.walnut.walnut.exception.error.QnaNotFound;
+import com.shopper.walnut.walnut.exception.error.UserNotFound;
 import com.shopper.walnut.walnut.model.entity.QnA;
 import com.shopper.walnut.walnut.model.entity.User;
 import com.shopper.walnut.walnut.model.input.QnaInput;
@@ -27,11 +27,11 @@ public class QnAService {
     public void add(User user, QnaInput input) {
         Optional<User> optionalUser = userRepository.findById(user.getUserId());
         if(optionalUser.isEmpty()){
-            throw new UserException(ErrorCode.USER_NOT_FOUND);
+            throw new UserNotFound();
         }
         Optional<QnA> optional= qnARepository.findBySubject(input.getSubject());
         if(optional.isPresent()){
-            throw new QnAException(ErrorCode.QNA_ALREADY_EXIST);
+            throw new QnaAlreadyExist();
         }
         QnA qna = new QnA(optionalUser.get(), input.getSubject(), input.getContent());
         qna.setType(input.getType());
@@ -51,7 +51,7 @@ public class QnAService {
     public void delete(long qnaId) {
         Optional<QnA> optional = qnARepository.findById(qnaId);
         if(optional.isEmpty()){
-            throw new QnAException(ErrorCode.QNA_NOT_FOUND);
+            throw new QnaNotFound();
         }
         qnARepository.delete(optional.get());
     }

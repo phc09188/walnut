@@ -1,7 +1,6 @@
 package com.shopper.walnut.walnut.model.entity;
 
-import com.shopper.walnut.walnut.exception.ItemException;
-import com.shopper.walnut.walnut.exception.error.ErrorCode;
+import com.shopper.walnut.walnut.exception.error.ItemIsEmpty;
 import com.shopper.walnut.walnut.model.status.ItemStatus;
 import lombok.*;
 
@@ -82,7 +81,7 @@ public class Item implements ItemStatus {
     public void removeStock(long stockQuantity) {
         long remainStock = this.cnt - stockQuantity;
         if (remainStock < 0 || stockQuantity <= 0) {
-            throw new ItemException(ErrorCode.ITEM_IS_EMPTY);
+            throw new ItemIsEmpty();
         }
         this.cnt = remainStock;
     }

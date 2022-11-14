@@ -1,7 +1,7 @@
 package com.shopper.walnut.walnut.controller;
 
-import com.shopper.walnut.walnut.exception.CategoryException;
-import com.shopper.walnut.walnut.exception.error.ErrorCode;
+import com.shopper.walnut.walnut.exception.error.CategoryAlreadyExist;
+import com.shopper.walnut.walnut.exception.error.CategoryNotExist;
 import com.shopper.walnut.walnut.model.dto.BrandDto;
 import com.shopper.walnut.walnut.model.dto.CategoryDto;
 import com.shopper.walnut.walnut.model.entity.Brand;
@@ -96,7 +96,7 @@ public class AdminController {
     public String deleteCategory(CategoryDto categoryDto){
         Optional<Category> optionalCategory = categoryRepository.findById(categoryDto.getSubCategoryName());
         if(optionalCategory.isEmpty()){
-            throw new CategoryException(ErrorCode.CATEGORY_NOT_EXIST);
+            throw new CategoryNotExist();
         }
         Category category = optionalCategory.get();
         categoryRepository.delete(category);
@@ -114,7 +114,7 @@ public class AdminController {
     public String categoryAdd(@Validated CategoryInput categoryDto){
         Optional<Category> categoryOptional = categoryRepository.findById(categoryDto.getSubCategoryName());
         if(categoryOptional.isPresent()){
-            throw new CategoryException(ErrorCode.CATEGORY_ALREADY_EXIST);
+            throw new CategoryAlreadyExist();
         }
         Category category = Category.builder()
                 .subCategoryName(categoryDto.getSubCategoryName())

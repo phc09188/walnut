@@ -2,10 +2,15 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Error</title>
 </head>
 <body>
-    <h2> 인덱스</h2>
+<div>
+    <h1>Error Page</h1>
+    <br>error msg : <span th:text="${msg}"></span>
+    <br><a href="/">홈으로 이동</a>
+</div>
+
 
 </body>
 </html>

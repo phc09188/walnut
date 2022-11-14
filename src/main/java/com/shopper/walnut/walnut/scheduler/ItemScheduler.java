@@ -1,7 +1,6 @@
 package com.shopper.walnut.walnut.scheduler;
 
-import com.shopper.walnut.walnut.exception.ItemException;
-import com.shopper.walnut.walnut.exception.error.ErrorCode;
+import com.shopper.walnut.walnut.exception.error.ItemNotFound;
 import com.shopper.walnut.walnut.model.constant.CacheKey;
 import com.shopper.walnut.walnut.model.entity.BrandItem;
 import com.shopper.walnut.walnut.model.entity.Item;
@@ -60,7 +59,7 @@ public class ItemScheduler {
         for(BrandItem brandItem : brandItemList){
             Optional<Item> optional = itemRepository.findByBrandItemId(brandItem.getBrandItemId());
             if(optional.isEmpty()){
-                throw new ItemException(ErrorCode.ITEM_NOT_FOUND);
+                throw new ItemNotFound();
             }
             Item item = optional.get();
             if(item.getCnt() != brandItem.getCnt()){

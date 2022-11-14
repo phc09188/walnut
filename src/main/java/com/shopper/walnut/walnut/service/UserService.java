@@ -1,8 +1,7 @@
 package com.shopper.walnut.walnut.service;
 
 import com.shopper.walnut.walnut.conponents.MailComponents;
-import com.shopper.walnut.walnut.exception.UserException;
-import com.shopper.walnut.walnut.exception.error.ErrorCode;
+import com.shopper.walnut.walnut.exception.error.UserIDAlreadyExist;
 import com.shopper.walnut.walnut.model.entity.Address;
 import com.shopper.walnut.walnut.model.input.UserClassification;
 import com.shopper.walnut.walnut.model.input.UserInput;
@@ -19,7 +18,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +34,9 @@ public class UserService implements UserDetailsService {
     /**회원가입**/
     public void register(UserInput parameter){
         //해당 아이디의 유저가 존재하는지 확인
-        Optional<User> optionalUser = userRepository.findByUserIdAndUserEmail(parameter.getUserId(),parameter.getUserEmail());
+        Optional<User> optionalUser = userRepository.findByUserIdOrUserEmail(parameter.getUserId(),parameter.getUserEmail());
         if(optionalUser.isPresent()){
-            throw new UserException(ErrorCode.USERID_ALREADY_EXIST);
+            throw new UserIDAlreadyExist();
         }
         String encPassword = BCrypt.hashpw(parameter.getUserPassword(), BCrypt.gensalt());
         String uuid = UUID.randomUUID().toString();

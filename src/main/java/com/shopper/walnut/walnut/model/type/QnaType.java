@@ -1,7 +1,5 @@
 package com.shopper.walnut.walnut.model.type;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public enum QnaType {
     PAY("결제"),

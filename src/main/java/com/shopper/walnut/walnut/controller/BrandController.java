@@ -1,7 +1,6 @@
 package com.shopper.walnut.walnut.controller;
 
-import com.shopper.walnut.walnut.exception.BrandRegisterException;
-import com.shopper.walnut.walnut.exception.error.ErrorCode;
+import com.shopper.walnut.walnut.exception.error.BrandNotFound;
 import com.shopper.walnut.walnut.model.dto.BrandDto;
 import com.shopper.walnut.walnut.model.dto.BrandItemDto;
 import com.shopper.walnut.walnut.model.entity.*;
@@ -56,7 +55,7 @@ public class BrandController {
         String brandLogInId = user.getUsername();
         Optional<Brand> optionalBrand = brandRepository.findByBrandLoginId(brandLogInId);
         if(optionalBrand.isEmpty()){
-            throw new BrandRegisterException(ErrorCode.BRAND_NOT_FOUND);
+            throw new BrandNotFound();
         }
         Brand brand = optionalBrand.get();
         model.addAttribute("brandInfo", brand);

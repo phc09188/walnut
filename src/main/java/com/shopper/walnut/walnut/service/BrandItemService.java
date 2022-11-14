@@ -1,20 +1,16 @@
 package com.shopper.walnut.walnut.service;
 
-import com.shopper.walnut.walnut.exception.CategoryException;
-import com.shopper.walnut.walnut.exception.ItemException;
-import com.shopper.walnut.walnut.exception.error.ErrorCode;
+import com.shopper.walnut.walnut.exception.error.CategoryNotExist;
 import com.shopper.walnut.walnut.model.constant.CacheKey;
 import com.shopper.walnut.walnut.model.dto.BrandItemDto;
 import com.shopper.walnut.walnut.model.entity.Brand;
 import com.shopper.walnut.walnut.model.entity.BrandItem;
 import com.shopper.walnut.walnut.model.entity.Category;
-import com.shopper.walnut.walnut.model.entity.Item;
 import com.shopper.walnut.walnut.model.input.BrandItemInput;
 import com.shopper.walnut.walnut.repository.BrandItemRepository;
 import com.shopper.walnut.walnut.repository.CategoryRepository;
 import com.shopper.walnut.walnut.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +33,7 @@ public class BrandItemService {
     public void add(BrandItemInput parameter, Brand brand){
         Optional<Category> optional = categoryRepository.findById(parameter.getSubCategoryName());
         if(optional.isEmpty()){
-            throw new CategoryException(ErrorCode.CATEGORY_NOT_EXIST);
+            throw new CategoryNotExist();
         }
         BrandItem item = BrandItemInput.of(parameter);
 

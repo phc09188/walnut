@@ -1,9 +1,6 @@
 package com.shopper.walnut.walnut.controller;
 
-import com.shopper.walnut.walnut.exception.OrderException;
-import com.shopper.walnut.walnut.exception.PayException;
-import com.shopper.walnut.walnut.exception.UserException;
-import com.shopper.walnut.walnut.exception.error.ErrorCode;
+import com.shopper.walnut.walnut.exception.error.*;
 import com.shopper.walnut.walnut.model.entity.*;
 import com.shopper.walnut.walnut.model.status.ItemStatus;
 import com.shopper.walnut.walnut.repository.CartRepository;
@@ -38,7 +35,7 @@ public class OrderController {
         Optional<Item> optionalItem = itemRepository.findById(itemId);
         User user = optionalUser.get();  Item item = optionalItem.get();
         if(!user.isPayYn()){
-            throw new UserException(ErrorCode.USER_PAY_NOT_ALLOW);
+            throw new UserPayNotAllow();
         }
         String userId = logInUser.getUsername();
         if(buy.equals("true")) {
@@ -62,14 +59,14 @@ public class OrderController {
         User user = optionalUser.get(); Item item = optionalItem.get();
         long payAmount = (item.getSalePrice() * itemCnt) - userPoint;
         if(user.getUserCache() < payAmount){
-            throw new PayException(ErrorCode.NOT_ENOUGH_CACHE);
+            throw new NotEnoughCache();
         }
         if(user.getUserPoint() < userPoint){
-            throw new PayException(ErrorCode.POINT_NOT_ENOUGH);
+            throw new PointNotEnough();
         }
 
         if(item.getCnt() <=0 || !item.getSaleStatus().equals(ItemStatus.ITEM_STATUS_ING)){
-            throw new PayException(ErrorCode.ITEM_IS_EMPTY);
+            throw new ItemIsEmpty();
         }
         try {
             orderService.order(user.getUserId(), itemId, itemCnt, userPoint, payAmount);
@@ -85,7 +82,7 @@ public class OrderController {
     public String deleteOrder(Long orderId){
         Optional<Order> optionalOrder =  orderRepository.findById(orderId);
         if(optionalOrder.isEmpty()){
-            throw new OrderException(ErrorCode.ORDER_NOT_FOUND);
+            throw new OrderNotFound();
         }
         orderRepository.delete(optionalOrder.get());
         return "redirect:/user/orderList";

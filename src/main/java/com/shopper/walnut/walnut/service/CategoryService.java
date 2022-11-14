@@ -1,7 +1,6 @@
 package com.shopper.walnut.walnut.service;
 
-import com.shopper.walnut.walnut.exception.CategoryException;
-import com.shopper.walnut.walnut.exception.error.ErrorCode;
+import com.shopper.walnut.walnut.exception.error.CategoryNotExist;
 import com.shopper.walnut.walnut.model.entity.Category;
 import com.shopper.walnut.walnut.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ public class CategoryService {
     public Category findCategoryName(String id) {
         Optional<Category> optionalCategory =  categoryRepository.findById(id);
         if(optionalCategory.isEmpty()){
-            throw new CategoryException(ErrorCode.CATEGORY_NOT_EXIST);
+            throw new CategoryNotExist();
         }
         return optionalCategory.get();
     }

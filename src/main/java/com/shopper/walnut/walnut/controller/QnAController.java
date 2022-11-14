@@ -1,8 +1,7 @@
 package com.shopper.walnut.walnut.controller;
 
-import com.shopper.walnut.walnut.exception.QnAException;
-import com.shopper.walnut.walnut.exception.UserException;
-import com.shopper.walnut.walnut.exception.error.ErrorCode;
+import com.shopper.walnut.walnut.exception.error.QnaNotFound;
+import com.shopper.walnut.walnut.exception.error.UserNotFound;
 import com.shopper.walnut.walnut.model.entity.QnA;
 import com.shopper.walnut.walnut.model.input.QnaInput;
 import com.shopper.walnut.walnut.model.type.QnaType;
@@ -56,7 +55,7 @@ public class QnAController {
     public String qnaDetail(Model model, @RequestParam long qnaId){
         Optional<QnA> optionalQnA =  qnARepository.findById(qnaId);
         if(optionalQnA.isEmpty()){
-            throw new QnAException(ErrorCode.QNA_NOT_FOUND);
+            throw new QnaNotFound();
         }
 
         model.addAttribute("qna",optionalQnA.get());
@@ -68,12 +67,13 @@ public class QnAController {
         model.addAttribute("types", qnAService.getList());
         return "/qna/addForm";
     }
+
     /** qna 추가 **/
     @PostMapping("/add.do")
     public String qnaAdd(QnaInput input, @AuthenticationPrincipal User logInUser){
         Optional<com.shopper.walnut.walnut.model.entity.User> optionalUser = userRepository.findById(logInUser.getUsername());
         if(optionalUser.isEmpty()){
-            throw new UserException(ErrorCode.USER_NOT_FOUND);
+            throw new UserNotFound();
         }
         qnAService.add(optionalUser.get(),input);
 
@@ -87,4 +87,5 @@ public class QnAController {
 
         return "redirect:/qna/main";
     }
+
 }

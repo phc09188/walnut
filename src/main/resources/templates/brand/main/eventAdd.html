@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>이벤트 등록</title>
+</head>
+<body>
+<h1>이벤트 등록</h1>
+
+
+<div class="detail">
+    <p>오후 6시 이전에 등록한 이벤트는 다음날 부터 시작되고, 그 이후에 등록한 이벤트는 이틀 후에 적용됩니다. </p>
+    <form th:action="@{/brand/main/event/add.do}" id="submitForm" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="brandId" th:value="${brand.brandId}"/>
+        <table>
+            <tbody>
+            <tr>
+                <th>행사 사진</th>
+                <td>
+                    <span> <input type="file" name="file" placeholder="선택된 파일 없음" required/></span>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    주제
+                </th>
+                <td>
+                   <input type="text" name="subject" placeholder="주제를 입력하세요." required>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    설명
+                </th>
+                <td>
+                    <input type="text" name="content" required placeholder="내용을 입력하세요"/>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    마감일
+                </th>
+                <td>
+                    <input type="date" name="endDate" required placeholder="마감일을 입력하세요"/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="submit">승인 요청</button>
+    </form>
+</div>
+</body>
+</html>

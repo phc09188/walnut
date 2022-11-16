@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+</head>
+<body>
+<div>
+    <form method="post" action="/admin/event/submit.do">
+        <input type="hidden" name="eventId" th:value="${event.eventId}"/>
+        <table>
+            <tbody>
+            <tr>
+                <th>No</th>
+                <td><p name="eventId"
+                       th:value="${event.eventId}" th:text="${event.eventId}"></p></td>
+            </tr>
+            <tr>
+                <th>주제</th>
+                <td><p th:text="${event.subject}"></p></td>
+            </tr>
+            <tr>
+                <th>홍보 사진</th>
+                <td><img th:src="${event.urlFileName}"></td>
+            </tr>
+            <tr>
+                <th>내용</th>
+                <td><p th:text="${event.content}"></p></td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="submit">승인</button>
+    </form>
+</div>
+</body>
+</html>

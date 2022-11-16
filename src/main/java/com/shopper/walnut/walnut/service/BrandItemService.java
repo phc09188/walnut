@@ -9,7 +9,6 @@ import com.shopper.walnut.walnut.model.entity.Category;
 import com.shopper.walnut.walnut.model.input.BrandItemInput;
 import com.shopper.walnut.walnut.repository.BrandItemRepository;
 import com.shopper.walnut.walnut.repository.CategoryRepository;
-import com.shopper.walnut.walnut.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -25,10 +24,9 @@ public class BrandItemService {
 
 
     /**
-     * 키로 brandItemId를 받고 싶었으나, input에서 아이디를 얻어올 수 없어서
-     * unique 속성을 지니고 있는 fileName(저장 url)을 키로 받아온다.
+     * 키로 brandItemId를 받아온다.
      */
-    @Cacheable(key = "#parameter.fileName", value= CacheKey.ITEM_SCHEDULE)
+    @Cacheable(key = "#parameter.brandItemId", value= CacheKey.ITEM_SCHEDULE)
     public void add(BrandItemInput parameter, Brand brand){
         Optional<Category> optional = categoryRepository.findById(parameter.getSubCategoryName());
         if(optional.isEmpty()){

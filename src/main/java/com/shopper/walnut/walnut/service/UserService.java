@@ -3,12 +3,15 @@ package com.shopper.walnut.walnut.service;
 import com.shopper.walnut.walnut.conponents.MailComponents;
 import com.shopper.walnut.walnut.exception.error.UserIDAlreadyExist;
 import com.shopper.walnut.walnut.model.entity.Address;
+import com.shopper.walnut.walnut.model.entity.EventListener;
 import com.shopper.walnut.walnut.model.input.UserClassification;
 import com.shopper.walnut.walnut.model.input.UserInput;
 import com.shopper.walnut.walnut.model.entity.User;
 import com.shopper.walnut.walnut.model.status.MemberShip;
 import com.shopper.walnut.walnut.model.status.UserStatus;
 import com.shopper.walnut.walnut.repository.BrandRepository;
+import com.shopper.walnut.walnut.repository.EventListenerRepository;
+import com.shopper.walnut.walnut.repository.EventRepository;
 import com.shopper.walnut.walnut.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,6 +31,7 @@ import java.util.UUID;
 @Service
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final EventListenerRepository eventListenerRepository;
     private final BrandRepository brandRepository;
     private final MailComponents mailComponents;
 
@@ -41,6 +45,9 @@ public class UserService implements UserDetailsService {
         String encPassword = BCrypt.hashpw(parameter.getUserPassword(), BCrypt.gensalt());
         String uuid = UUID.randomUUID().toString();
         User user = User.of(parameter,encPassword,uuid);
+        EventListener eventListener = new EventListener(parameter.getUserEmail(),parameter.isMarketingYn());
+        eventListener.setUser(user);
+        eventListenerRepository.save(eventListener);
         userRepository.save(user);
 
         /* test를 위해 잠시 메일은 중단

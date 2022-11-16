@@ -26,8 +26,10 @@ public class User {
     private String userPassword;
     private long userCache;
     private long userPoint;
+
     @Embedded
     private Address address;
+
     private String userPhone;
     private LocalDate userRegDt;
     @Enumerated(EnumType.STRING)
@@ -44,7 +46,6 @@ public class User {
     private List<QnA> qnAList = new ArrayList<>();
 
 
-//    @Convert(converter = BooleanToYNConverter.class)
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean emailAuthYn;
     private String emailAuthKey;
@@ -52,8 +53,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
     private UserClassification userClassification;
-    @Column(nullable = false, columnDefinition = "TINYINT(1)")
-    private boolean marketingYn;
+
+
+
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean privateYn;
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
@@ -74,7 +76,6 @@ public class User {
                 .emailAuthYn(true)
                 .userStatus(UserStatus.ING)
                 .userClassification(UserClassification.SELLER)
-                .marketingYn(true)
                 .privateYn(true)
                 .payYn(true)
                 .build();
@@ -95,7 +96,6 @@ public class User {
                 .userCache(0)
                 .userPoint(0)
                 .emailAuthKey(uuid)
-                .marketingYn(parameter.isMarketingYn())
                 .privateYn(parameter.isPrivateYn())
                 .payYn(parameter.isPayYn())
                 .userClassification(UserClassification.USER)

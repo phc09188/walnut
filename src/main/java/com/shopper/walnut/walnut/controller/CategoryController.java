@@ -1,10 +1,12 @@
 package com.shopper.walnut.walnut.controller;
 
+import com.shopper.walnut.walnut.model.constant.CacheKey;
 import com.shopper.walnut.walnut.model.entity.Category;
 import com.shopper.walnut.walnut.model.entity.Item;
 import com.shopper.walnut.walnut.repository.CategoryRepository;
 import com.shopper.walnut.walnut.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,8 @@ public class CategoryController {
     private final CategoryRepository categoryRepository;
     private final ItemRepository itemRepository;
 
+
+    @Cacheable(key = "#model.asMap()", value= CacheKey.CATEGORY_PAGE)
     /**카테고리에 맞는 상품 view**/
     @GetMapping("/category/categoryList")
     public String categoryItem(@RequestParam String categoryName, Model model){
@@ -29,7 +33,10 @@ public class CategoryController {
 
         return "/category/categoryList";
     }
+
+
     /**서브카테고리에 맞는 상품 view**/
+    @Cacheable(key = "#model.asMap()", value= CacheKey.SUB_CATEGORY_PAGE)
     @GetMapping("/category/subCategoryList")
     public String subCategoryItem(@RequestParam String subCategoryName, Model model){
         List<Item> items = itemRepository.findAllBySubCategoryName(subCategoryName);

@@ -13,6 +13,7 @@ import com.shopper.walnut.walnut.repository.BrandItemRepository;
 import com.shopper.walnut.walnut.repository.BrandRepository;
 import com.shopper.walnut.walnut.repository.OrderRepository;
 import com.shopper.walnut.walnut.service.*;
+import com.shopper.walnut.walnut.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -48,6 +49,7 @@ public class BrandController {
     private final CategoryService categoryService;
     private final OrderService orderService;
     private final DeliveryService deliveryService;
+    private final FileUtil fileUtil;
 
     /** 메인페이지 **/
     @GetMapping("/main/detail.do")
@@ -74,74 +76,15 @@ public class BrandController {
     public String addSubmit(MultipartFile file
             , @Validated BrandInput parameter) {
 
-        String saveFilename = "";
-        String urlFilename = "";
+        String[] utils = fileUtil.FileUrl(file, "brand").split(",");
 
-        if (file != null) {
-            String originalFilename = file.getOriginalFilename();
-
-            String baseLocalPath = "/Users/chandle/Downloads/walnut/src/main/resources/static/brand/businessRegistration";
-            String baseUrlPath = "/brand";
-
-            String[] arrFilename = getNewSaveFile(baseLocalPath, baseUrlPath, originalFilename);
-
-            saveFilename = arrFilename[0];
-            urlFilename = arrFilename[1];
-
-            try {
-                File newFile = new File(saveFilename);
-                FileCopyUtils.copy(file.getInputStream(), new FileOutputStream(newFile));
-            } catch (IOException e) {
-                log.info("############################ - 1");
-                log.info(e.getMessage());
-            }
-        }
-
-        parameter.setFileName(saveFilename);
-        parameter.setUrlFileName(urlFilename);
-
-
+        parameter.setFileName(utils[0]);
+        parameter.setUrlFileName(utils[1]);
         signUpService.register(parameter);
         return "redirect:/";
     }
 
-    /** 파일 저장 유틸 **/
-    private String[] getNewSaveFile(String baseLocalPath, String baseUrlPath, String originalFilename) {
 
-        LocalDate now = LocalDate.now();
-
-        String[] dirs = {
-                String.format("%s/%d/", baseLocalPath,now.getYear()),
-                String.format("%s/%d/%02d/", baseLocalPath, now.getYear(),now.getMonthValue()),
-                String.format("%s/%d/%02d/%02d/", baseLocalPath, now.getYear(), now.getMonthValue(), now.getDayOfMonth())};
-
-        String urlDir = String.format("%s/%d/%02d/%02d/", baseUrlPath, now.getYear(), now.getMonthValue(), now.getDayOfMonth());
-
-        for(String dir : dirs) {
-            File file = new File(dir);
-            if (!file.isDirectory()) {
-                file.mkdir();
-            }
-        }
-
-        String fileExtension = "";
-        if (originalFilename != null) {
-            int dotPos = originalFilename.lastIndexOf(".");
-            if (dotPos > -1) {
-                fileExtension = originalFilename.substring(dotPos + 1);
-            }
-        }
-
-        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        String newFilename = String.format("%s%s", dirs[2], uuid);
-        String newUrlFilename = String.format("%s%s", urlDir, uuid);
-        if (fileExtension.length() > 0) {
-            newFilename += "." + fileExtension;
-            newUrlFilename += "." + fileExtension;
-        }
-
-        return new String[]{newFilename, newUrlFilename};
-    }
     /** 아이템 리스트 출력 **/
     @GetMapping("/main/item.do")
     public String brandItemList(Model model, @AuthenticationPrincipal User user){
@@ -177,30 +120,8 @@ public class BrandController {
     public String itemAdd(@AuthenticationPrincipal User user,
                           MultipartFile file,
                           BrandItemInput parameter){
-        String saveFilename = "";
-        String urlFilename = "";
-
-        if (file != null) {
-            String originalFilename = file.getOriginalFilename();
-
-            String baseLocalPath = "/Users/chandle/walnut/src/main/resources/static/brand/itemImg";
-            String baseUrlPath = "/brand";
-
-            String[] arrFilename = getNewSaveFile(baseLocalPath, baseUrlPath, originalFilename);
-
-            saveFilename = arrFilename[0];
-            urlFilename = arrFilename[1];
-
-            try {
-                File newFile = new File(saveFilename);
-                FileCopyUtils.copy(file.getInputStream(), new FileOutputStream(newFile));
-            } catch (IOException e) {
-                log.info("############################ - 1");
-                log.info(e.getMessage());
-            }
-        }
-        parameter.setFileName(saveFilename);
-        parameter.setFileUrl(urlFilename);
+        String[] utils = fileUtil.FileUrl(file,"item").split(",");
+        parameter.setFileName(utils[0]); parameter.setFileUrl(utils[1]);
         Category category = categoryService.findCategoryName(parameter.getSubCategoryName());
         parameter.setCategoryName(category.getCategoryName());
         Optional<Brand> optionalBrand = brandRepository.findByBrandLoginId(user.getUsername());
@@ -232,7 +153,6 @@ public class BrandController {
     @PostMapping("/main/order/edit.do")
     public String deliveryEdit(@RequestParam Long orderId, @RequestParam DeliveryStatus status){
         Order order = orderRepository.findById(orderId).get();
-//        DeliveryStatus deliveryStatus =  orderService.findDeliveryStatus(status);
         order.getDelivery().setStatus(status);
         if(status == DeliveryStatus.COMPLETE){
             order.setStatus(OrderStatus.COMPLETE);
@@ -242,9 +162,4 @@ public class BrandController {
 
         return "redirect:/brand/main/orderList";
     }
-
-
-
-
-
 }

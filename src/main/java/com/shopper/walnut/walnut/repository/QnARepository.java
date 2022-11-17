@@ -12,7 +12,10 @@ import java.util.Optional;
 @Repository
 public interface QnARepository extends JpaRepository<QnA, Long> {
     Optional<QnA> findBySubject(String subject);
+
     List<QnA> findAllByStatus(QnaStatus status);
+
     List<QnA> findAllByType(QnaType type);
+
     List<QnA> findAllByAnswer(String answer);
 }

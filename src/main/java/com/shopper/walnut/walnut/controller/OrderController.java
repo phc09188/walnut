@@ -3,7 +3,6 @@ package com.shopper.walnut.walnut.controller;
 import com.shopper.walnut.walnut.exception.error.*;
 import com.shopper.walnut.walnut.model.entity.*;
 import com.shopper.walnut.walnut.model.status.ItemStatus;
-import com.shopper.walnut.walnut.repository.CartRepository;
 import com.shopper.walnut.walnut.repository.ItemRepository;
 import com.shopper.walnut.walnut.repository.OrderRepository;
 import com.shopper.walnut.walnut.repository.UserRepository;
@@ -11,7 +10,6 @@ import com.shopper.walnut.walnut.service.CartService;
 import com.shopper.walnut.walnut.service.OrderService;
 import com.shopper.walnut.walnut.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +23,6 @@ import java.util.Optional;
 public class OrderController {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-    private final CartRepository cartRepository;
     private final CartService cartService;
     private final OrderRepository orderRepository;
     private final OrderService orderService;
@@ -36,17 +33,15 @@ public class OrderController {
                               Model model, @RequestParam String buy,
                               @RequestParam Long itemId, @RequestParam Long itemCnt){
 
-        Optional<User> optionalUser =  userRepository.findById(logInUser.getUsername());
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
-        User user = optionalUser.get();  Item item = optionalItem.get();
+        User user = userRepository.findById(logInUser.getUsername()).orElseThrow(UserNotFound::new);
+        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFound::new);
         if(!user.isPayYn()){
             throw new UserPayNotAllow();
         }
-        String userId = logInUser.getUsername();
         if(buy.equals("true")) {
             model.addAttribute("itemCnt", itemCnt);
             model.addAttribute("item", item);
-            model.addAttribute("user", optionalUser.get());
+            model.addAttribute("user", user);
             return "/order/payment";
         }else{
             cartService.add(user, item, itemCnt);
@@ -57,9 +52,8 @@ public class OrderController {
     @PostMapping("/pay")
     public String itemPay(@AuthenticationPrincipal org.springframework.security.core.userdetails.User logInUser,
                           @RequestParam Long itemId, @RequestParam Long userPoint, @RequestParam Long itemCnt){
-        Optional<User> optionalUser = userRepository.findById(logInUser.getUsername());
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
-        User user = optionalUser.get(); Item item = optionalItem.get();
+        User user = userRepository.findById(logInUser.getUsername()).orElseThrow(UserNotFound::new);
+        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFound::new);
         long payAmount = (item.getSalePrice() * itemCnt) - userPoint;
         if(user.getUserCache() < payAmount){
             throw new NotEnoughCache();
@@ -107,7 +101,7 @@ public class OrderController {
     /** 주소 변경 폼 **/
     @GetMapping("/editAddress")
     public String editAddressForm(@RequestParam Long orderId, Model model){
-        Order order =  orderRepository.findById(orderId).get();
+        Order order =  orderRepository.findById(orderId).orElseThrow(OrderNotFound::new);
 
         model.addAttribute("order", order);
 
@@ -116,7 +110,7 @@ public class OrderController {
     /** 배송지 변경**/
     @PostMapping("/editAddress.do")
     public String editAddress(@RequestParam Long orderId, Address address){
-        Order order = orderRepository.findById(orderId).get();
+        Order order = orderRepository.findById(orderId).orElseThrow(OrderNotFound::new);
         order.getDelivery().setAddress(address);
         orderRepository.save(order);
 

@@ -1,7 +1,7 @@
 package com.shopper.walnut.walnut.service;
 
-import com.shopper.walnut.walnut.conponents.MailComponents;
 import com.shopper.walnut.walnut.exception.error.UserIDAlreadyExist;
+import com.shopper.walnut.walnut.exception.error.UserNotFound;
 import com.shopper.walnut.walnut.model.entity.Address;
 import com.shopper.walnut.walnut.model.entity.EventListener;
 import com.shopper.walnut.walnut.model.input.UserClassification;
@@ -9,9 +9,7 @@ import com.shopper.walnut.walnut.model.input.UserInput;
 import com.shopper.walnut.walnut.model.entity.User;
 import com.shopper.walnut.walnut.model.status.MemberShip;
 import com.shopper.walnut.walnut.model.status.UserStatus;
-import com.shopper.walnut.walnut.repository.BrandRepository;
 import com.shopper.walnut.walnut.repository.EventListenerRepository;
-import com.shopper.walnut.walnut.repository.EventRepository;
 import com.shopper.walnut.walnut.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,20 +30,20 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final EventListenerRepository eventListenerRepository;
-    private final BrandRepository brandRepository;
-    private final MailComponents mailComponents;
 
-    /**회원가입**/
-    public void register(UserInput parameter){
+    /**
+     * 회원가입
+     **/
+    public void register(UserInput parameter) {
         //해당 아이디의 유저가 존재하는지 확인
-        Optional<User> optionalUser = userRepository.findByUserIdOrUserEmail(parameter.getUserId(),parameter.getUserEmail());
-        if(optionalUser.isPresent()){
+        Optional<User> optionalUser = userRepository.findByUserIdOrUserEmail(parameter.getUserId(), parameter.getUserEmail());
+        if (optionalUser.isPresent()) {
             throw new UserIDAlreadyExist();
         }
         String encPassword = BCrypt.hashpw(parameter.getUserPassword(), BCrypt.gensalt());
         String uuid = UUID.randomUUID().toString();
-        User user = User.of(parameter,encPassword,uuid);
-        EventListener eventListener = new EventListener(parameter.getUserEmail(),parameter.isMarketingYn());
+        User user = User.of(parameter, encPassword, uuid);
+        EventListener eventListener = new EventListener(parameter.getUserEmail(), parameter.isMarketingYn());
         eventListener.setUser(user);
         eventListenerRepository.save(eventListener);
         userRepository.save(user);
@@ -58,7 +56,10 @@ public class UserService implements UserDetailsService {
         mailComponents.sendMail(email, subject, text);*/
 
     }
-    /** 이메일 인증 여부 확인**/
+
+    /**
+     * 이메일 인증 여부 확인
+     **/
     public boolean emailAuth(String uuid) {
 
         Optional<User> optionalUser = userRepository.findByEmailAuthKey(uuid);
@@ -77,51 +78,57 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    /** 맴버쉽 업데이트 **/
-    public void userMemberShipUpdate(User user, long payAmount){
-        long amount =  user.getPayAmount() + payAmount;
+    /**
+     * 맴버쉽 업데이트
+     **/
+    public void userMemberShipUpdate(User user, long payAmount) {
+        long amount = user.getPayAmount() + payAmount;
         String memberShip = user.getMemberShip().getValue();
-        if(amount>=0 && amount<50000){
-            if(!memberShip.equals("BRONZE")){
+        if (amount >= 0 && amount < 50000) {
+            if (!memberShip.equals("BRONZE")) {
                 user.setMemberShip(MemberShip.BRONZE);
             }
-        }else if(amount>=50000 && amount<200000){
-            if(!memberShip.equals("SILVER")){
+        } else if (amount >= 50000 && amount < 200000) {
+            if (!memberShip.equals("SILVER")) {
                 user.setMemberShip(MemberShip.SILVER);
             }
-        }else if(amount>=200000 && amount<500000){
-            if(!memberShip.equals("GOLD")) {
+        } else if (amount >= 200000 && amount < 500000) {
+            if (!memberShip.equals("GOLD")) {
                 user.setMemberShip(MemberShip.GOLD);
             }
-        }else if(amount>=500000 && amount<1000000){
-            if(!memberShip.equals("PLATINUM")){
+        } else if (amount >= 500000 && amount < 1000000) {
+            if (!memberShip.equals("PLATINUM")) {
                 user.setMemberShip(MemberShip.PLATINUM);
             }
-        }else{
+        } else {
             user.setMemberShip(MemberShip.DIAMOND);
         }
         userRepository.save(user);
 
     }
-    /** 맴버쉽 상승에 필요한 금액 **/
-    public String memberShip(User user){
+
+    /**
+     * 맴버쉽 상승에 필요한 금액
+     **/
+    public String memberShip(User user) {
         long amount = user.getPayAmount();
-        if(amount>=0 && amount<50000){
+        if (amount >= 0 && amount < 50000) {
             return String.valueOf(50000 - amount);
-        }else if(amount>=50000 && amount<200000){
+        } else if (amount >= 50000 && amount < 200000) {
             return String.valueOf(200000 - amount);
-        }else if(amount>=200000 && amount<500000){
+        } else if (amount >= 200000 && amount < 500000) {
             return String.valueOf(500000 - amount);
-        }else if(amount>=500000 && amount<1000000){
+        } else if (amount >= 500000 && amount < 1000000) {
             return String.valueOf(1000000 - amount);
-        }else{
+        } else {
             return "최고 등급입니다.";
         }
     }
 
 
-
-    /** 권한 별 로그인 **/
+    /**
+     * 권한 별 로그인
+     **/
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> optionalMember = userRepository.findById(username);
@@ -130,31 +137,36 @@ public class UserService implements UserDetailsService {
         }
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         User user = optionalMember.get();
-        if(user.getUserClassification() == UserClassification.USER){
+        if (user.getUserClassification() == UserClassification.USER) {
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         }
-        if(user.getUserClassification() == UserClassification.ADMIN){
+        if (user.getUserClassification() == UserClassification.ADMIN) {
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }
-        if(user.getUserClassification() == UserClassification.SELLER){
+        if (user.getUserClassification() == UserClassification.SELLER) {
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_BRAND"));
         }
         return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getUserPassword(), grantedAuthorities);
     }
 
-    /** 캐쉬 충전 **/
+    /**
+     * 캐쉬 충전
+     **/
     public void cacheUp(String userId, long cache) {
-        User user = userRepository.findById(userId).get();
-        user.setUserCache(user.getUserCache()+cache);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFound::new);
+        user.setUserCache(user.getUserCache() + cache);
         userRepository.save(user);
     }
-    /** 유저 정보 수정 **/
+
+    /**
+     * 유저 정보 수정
+     **/
     public void userUpdate(User user, UserInput input) {
-        if(input.getUserPhone() != null &&user.getUserPhone() != input.getUserPhone()){
+        if (input.getUserPhone() != null && !user.getUserPhone().equals(input.getUserPhone())) {
             user.setUserPhone(input.getUserPhone());
         }
-        if(input.getDetailAdr() !=null && user.getAddress().getDetailAdr() != input.getDetailAdr()){
-            Address address = new Address(input.getZipCode(),input.getStreetAdr(),input.getDetailAdr());
+        if (input.getDetailAdr() != null && !user.getAddress().getDetailAdr().equals(input.getDetailAdr())) {
+            Address address = new Address(input.getZipCode(), input.getStreetAdr(), input.getDetailAdr());
             user.setAddress(address);
         }
         userRepository.save(user);

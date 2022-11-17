@@ -14,19 +14,21 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class FileUtil {
-    /** 파일 저장 유틸 **/
+    /**
+     * 파일 저장 유틸
+     **/
     private String[] getNewSaveFile(String baseLocalPath, String baseUrlPath, String originalFilename) {
 
         LocalDate now = LocalDate.now();
 
         String[] dirs = {
-                String.format("%s/%d/", baseLocalPath,now.getYear()),
-                String.format("%s/%d/%02d/", baseLocalPath, now.getYear(),now.getMonthValue()),
+                String.format("%s/%d/", baseLocalPath, now.getYear()),
+                String.format("%s/%d/%02d/", baseLocalPath, now.getYear(), now.getMonthValue()),
                 String.format("%s/%d/%02d/%02d/", baseLocalPath, now.getYear(), now.getMonthValue(), now.getDayOfMonth())};
 
         String urlDir = String.format("%s/%d/%02d/%02d/", baseUrlPath, now.getYear(), now.getMonthValue(), now.getDayOfMonth());
 
-        for(String dir : dirs) {
+        for (String dir : dirs) {
             File file = new File(dir);
             if (!file.isDirectory()) {
                 file.mkdir();
@@ -51,18 +53,19 @@ public class FileUtil {
 
         return new String[]{newFilename, newUrlFilename};
     }
-    public String FileUrl(MultipartFile file, String type){
+
+    public String FileUrl(MultipartFile file, String type) {
         String saveFilename = "";
         String urlFilename = "";
 
         if (file != null) {
             String originalFilename = file.getOriginalFilename();
             String baseLocalPath;
-            if(type.equals("event")) {
+            if (type.equals("event")) {
                 baseLocalPath = "/Users/chandle/walnut/src/main/resources/static/brand/eventImg";
-            }else if(type.equals("item")){
+            } else if (type.equals("item")) {
                 baseLocalPath = "/Users/chandle/walnut/src/main/resources/static/brand/itemImg";
-            }else{
+            } else {
                 baseLocalPath = "/Users/chandle/walnut/src/main/resources/static/brand/businessRegistration";
             }
             String baseUrlPath = "/brand";
@@ -80,7 +83,6 @@ public class FileUtil {
                 log.info(e.getMessage());
             }
         }
-        String outPut = saveFilename + "," + urlFilename;
-        return outPut;
+        return saveFilename + "," + urlFilename;
     }
 }

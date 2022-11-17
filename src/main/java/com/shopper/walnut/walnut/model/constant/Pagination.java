@@ -84,8 +84,8 @@ public class Pagination {
 
         /* === 다음 블럭에 대한 validation ===*/
         if(nextBlock > totalPageCnt) {nextBlock = totalPageCnt;}
-        this.next = endPage == totalPageCnt ? false : true;
-        this.prev = startPage == 1 ? false : true;
+        this.next = endPage != totalPageCnt;
+        this.prev = startPage != 1;
         setStartIndex((page-1) * pageSize);
     }
 }

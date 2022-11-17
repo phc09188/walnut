@@ -10,7 +10,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -22,10 +21,12 @@ public class CategoryController {
     private final ItemRepository itemRepository;
 
 
-    @Cacheable(key = "#model.asMap()", value= CacheKey.CATEGORY_PAGE)
-    /**카테고리에 맞는 상품 view**/
+    /**
+     * 카테고리에 맞는 상품 view
+     **/
+    @Cacheable(key = "#model.asMap()", value = CacheKey.CATEGORY_PAGE)
     @GetMapping("/category/categoryList")
-    public String categoryItem(@RequestParam String categoryName, Model model){
+    public String categoryItem(@RequestParam String categoryName, Model model) {
         List<Category> subCategoryList = categoryRepository.findAllByCategoryName(categoryName);
         List<Item> items = itemRepository.findAllByCategoryName(categoryName);
         model.addAttribute("subCategoryList", subCategoryList);
@@ -35,10 +36,12 @@ public class CategoryController {
     }
 
 
-    /**서브카테고리에 맞는 상품 view**/
-    @Cacheable(key = "#model.asMap()", value= CacheKey.SUB_CATEGORY_PAGE)
+    /**
+     * 서브카테고리에 맞는 상품 view
+     **/
+    @Cacheable(key = "#model.asMap()", value = CacheKey.SUB_CATEGORY_PAGE)
     @GetMapping("/category/subCategoryList")
-    public String subCategoryItem(@RequestParam String subCategoryName, Model model){
+    public String subCategoryItem(@RequestParam String subCategoryName, Model model) {
         List<Item> items = itemRepository.findAllBySubCategoryName(subCategoryName);
         model.addAttribute("items", items);
         return "/category/subCategoryList";

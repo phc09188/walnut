@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CartService {
     private final CartRepository cartRepository;
-    public boolean del(String idList) {
+
+    public void del(String idList) {
         if (idList != null && idList.length() > 0) {
             String[] ids = idList.split(",");
             for (String x : ids) {
@@ -26,7 +27,6 @@ public class CartService {
             }
         }
 
-        return true;
     }
 
     public void add(User user, Item item, Long itemCnt) {

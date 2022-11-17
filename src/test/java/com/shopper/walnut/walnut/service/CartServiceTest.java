@@ -1,5 +1,7 @@
 package com.shopper.walnut.walnut.service;
 
+import com.shopper.walnut.walnut.exception.error.ItemNotFound;
+import com.shopper.walnut.walnut.exception.error.UserNotFound;
 import com.shopper.walnut.walnut.model.entity.Cart;
 import com.shopper.walnut.walnut.model.entity.Item;
 import com.shopper.walnut.walnut.model.entity.User;
@@ -30,8 +32,8 @@ class CartServiceTest {
     @Transactional
     void add(){
         //given
-        User user = userRepository.findById("1111").get();
-        Item item = itemRepository.findById(Long.valueOf(1)).get();
+        User user = userRepository.findById("1111").orElseThrow(UserNotFound::new);
+        Item item = itemRepository.findById(1L).orElseThrow(ItemNotFound::new);
         long itemCnt = 10;
         //when
         cartService.add(user, item, itemCnt);
@@ -47,9 +49,8 @@ class CartServiceTest {
         //given
         String idList = "1,2,3";
         //when
-        boolean result = cartService.del(idList);
+        cartService.del(idList);
         //then
-        assertTrue(result);
     }
 
 }

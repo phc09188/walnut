@@ -1,6 +1,5 @@
 package com.shopper.walnut.walnut.config;
 
-import com.shopper.walnut.walnut.service.BrandSignUpService;
 import com.shopper.walnut.walnut.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +18,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserService userService;
-    private final BrandSignUpService brandService;
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/Users/chandle/Downloads/walnut/src/main/resources/static/brand/**");

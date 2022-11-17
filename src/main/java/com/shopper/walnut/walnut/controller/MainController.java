@@ -10,8 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,12 +31,12 @@ public class MainController {
         int nowPage = items.getPageable().getPageNumber() + 1;
         int totalNum = items.getTotalPages();
         int startPage = totalNum < 5 ? 1 : totalNum - 4;
-        List<String> categoryNames =  categoryService.getCategoryNames();
+        List<String> categoryNames = categoryService.getCategoryNames();
         model.addAttribute("nowPage", nowPage);
         model.addAttribute("totalNum", totalNum);
         model.addAttribute("startPage", startPage);
         model.addAttribute("items", items);
-        model.addAttribute("categoryNames",categoryNames );
+        model.addAttribute("categoryNames", categoryNames);
         return "/index";
     }
 

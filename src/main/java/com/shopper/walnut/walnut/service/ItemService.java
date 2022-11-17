@@ -1,5 +1,6 @@
 package com.shopper.walnut.walnut.service;
 
+import com.shopper.walnut.walnut.exception.error.BrandItemNotExist;
 import com.shopper.walnut.walnut.model.constant.CacheKey;
 import com.shopper.walnut.walnut.model.entity.BrandItem;
 import com.shopper.walnut.walnut.model.entity.Item;
@@ -21,28 +22,24 @@ import java.util.List;
 public class ItemService {
     private final ItemRepository itemRepository;
     private final BrandItemRepository brandItemRepository;
-    /**item 리스트 페이징처리**/
-    public Page<Item> getAllList(Pageable pageable){
+
+    /**
+     * item 리스트 페이징처리
+     **/
+    public Page<Item> getAllList(Pageable pageable) {
         return itemRepository.findAll(
                 PageRequest.of(pageable.getPageNumber(), 10, Sort.by("reviewScore")));
     }
 
-    /** 상품 리스트 최신화 **/
-    public void itemUpdate() {
-        List<BrandItem> list =  brandItemRepository.
-                findAllByAddDtBetween(
-                        LocalDate.now().minusDays(1), LocalDate.now()
-                );
-        for(BrandItem item : list){
-            cacheDelete(item.getBrandItemId());
-        }
-    }
-    /** 캐시에 저장된 정보를 가져와서 업데이트 후 삭제**/
+
+    /**
+     * 캐시에 저장된 정보를 가져와서 업데이트 후 삭제
+     **/
     @CacheEvict(value = CacheKey.ITEM_SCHEDULE, key = "#brandItemId")
-    public void cacheDelete(long brandItemId){
+    public void cacheDelete(long brandItemId) {
         boolean update = itemRepository.existsByBrandItemId(brandItemId);
-        if(!update){
-            BrandItem item = brandItemRepository.findById(brandItemId).get();
+        if (!update) {
+            BrandItem item = brandItemRepository.findById(brandItemId).orElseThrow(BrandItemNotExist::new);
             itemRepository.save(Item.of(item));
         }
     }

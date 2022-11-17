@@ -6,7 +6,8 @@ public enum DeliveryStatus {
     COMPLETE("COMPLETE"),
     CANCEL("CANCEL");
 
-    private String value;
+    private final String value;
+
     DeliveryStatus(String value) {
         this.value = value;
     }

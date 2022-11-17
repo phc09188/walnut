@@ -16,24 +16,23 @@ import java.util.Optional;
 public class ItemController {
     private final ItemRepository itemRepository;
 
-    /** 물품 정보**/
+    /**
+     * 물품 정보
+     **/
     @GetMapping("/info")
-    public String itemInfo(Model model, @RequestParam Long itemId){
+    public String itemInfo(Model model, @RequestParam Long itemId) {
         Optional<Item> optionalItem = itemRepository.findById(itemId);
-        if(optionalItem.isEmpty()){
+        if (optionalItem.isEmpty()) {
             throw new ItemNotFound();
         }
         Item item = optionalItem.get();
-        item.setViewCount(item.getViewCount()+1);
+        item.setViewCount(item.getViewCount() + 1);
         itemRepository.save(item);
         String cartOrBuy = "";
-        model.addAttribute("item",item);
+        model.addAttribute("item", item);
         model.addAttribute("cartOrBuy", cartOrBuy);
         return "/item/info";
     }
-
-
-
 
 
 }

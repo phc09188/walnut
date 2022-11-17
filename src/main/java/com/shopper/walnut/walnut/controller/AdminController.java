@@ -1,8 +1,6 @@
 package com.shopper.walnut.walnut.controller;
 
-import com.shopper.walnut.walnut.exception.error.CategoryAlreadyExist;
-import com.shopper.walnut.walnut.exception.error.CategoryNotExist;
-import com.shopper.walnut.walnut.exception.error.EventException;
+import com.shopper.walnut.walnut.exception.error.*;
 import com.shopper.walnut.walnut.model.constant.CacheKey;
 import com.shopper.walnut.walnut.model.dto.BrandDto;
 import com.shopper.walnut.walnut.model.dto.CategoryDto;
@@ -38,30 +36,38 @@ public class AdminController {
     private final QnARepository qnARepository;
     private final EventRepository eventRepository;
 
-    /**관리자 메인**/
+    /**
+     * 관리자 메인
+     **/
     @GetMapping("/main.do")
-    public String index(){
+    public String index() {
         return "admin/main";
     }
 
-    /**관리자 유저 관리 페이지 **/
+    /**
+     * 관리자 유저 관리 페이지
+     **/
     @GetMapping("/user/list.do")
-    public String userList(){
+    public String userList() {
         return "admin/user/list";
     }
 
-    /**관리자 브랜드 관리 페이지**/
+    /**
+     * 관리자 브랜드 관리 페이지
+     **/
     @GetMapping("/brand/list.do")
-    public String brandList(Model model){
+    public String brandList(Model model) {
         List<Brand> allBrand = brandRepository.findAll();
         List<BrandDto> list = BrandDto.of(allBrand);
         model.addAttribute("brandList", list);
         return "admin/brand/list";
     }
 
-    /**관리자 브랜드 입점 승인 페이지**/
+    /**
+     * 관리자 브랜드 입점 승인 페이지
+     **/
     @GetMapping("/brand/approve.do")
-    public String brandApprove(Model model){
+    public String brandApprove(Model model) {
         List<Brand> notOkBrand = brandRepository.findAllByBrandStatus(BrandStatus.MEMBER_STATUS_REQ);
         List<BrandDto> list = BrandDto.of(notOkBrand);
         System.out.println(list.size());
@@ -70,63 +76,68 @@ public class AdminController {
         return "admin/brand/approve";
     }
 
-    /** 브랜드 입점 승인 **/
+    /**
+     * 브랜드 입점 승인
+     **/
     @PostMapping("/approve/start.do")
-    public String approve(BrandDto dto){
-        Optional<Brand> optionalBrand = brandRepository.findByBrandName(dto.getBrandName());
-        if(optionalBrand.isEmpty()){
-            throw new RuntimeException("브랜드가 없습니다.");
-        }
-        Brand brand = optionalBrand.get();
+    public String approve(BrandDto dto) {
+        Brand brand = brandRepository.findByBrandName(dto.getBrandName())
+                .orElseThrow(BrandNotFound::new);
         brand.setBrandStatus(BrandStatus.MEMBER_STATUS_ING);
         brand.setBrandOkDt(LocalDateTime.now());
         brandRepository.save(brand);
         return "redirect:/admin/approve.do";
     }
-    /** 카테고리 리스트 출력 **/
+
+    /**
+     * 카테고리 리스트 출력
+     **/
     @GetMapping("/category/list.do")
-    public String categoryList(Model model){
-        List<Category> list =  categoryRepository.findAll();
+    public String categoryList(Model model) {
+        List<Category> list = categoryRepository.findAll();
         model.addAttribute("list", list);
         return "admin/category/list";
     }
-    /**카테고리 삭제**/
+
+    /**
+     * 카테고리 삭제
+     **/
     @PostMapping("/category/delete.do")
-    public String deleteCategory(CategoryDto categoryDto){
-        Optional<Category> optionalCategory = categoryRepository.findById(categoryDto.getSubCategoryName());
-        if(optionalCategory.isEmpty()){
-            throw new CategoryNotExist();
-        }
-        Category category = optionalCategory.get();
+    public String deleteCategory(CategoryDto categoryDto) {
+        Category category = categoryRepository.findById(categoryDto.getSubCategoryName())
+                .orElseThrow(CategoryNotExist::new);
         categoryRepository.delete(category);
         return "redirect:/admin/category/list";
     }
 
-    /** 카테고리 추가 폼 **/
+    /**
+     * 카테고리 추가 폼
+     **/
     @GetMapping("/category/add")
-    public String categoryAddForm(Model model){
+    public String categoryAddForm(Model model) {
         model.addAttribute("categoryForm", new CategoryDto());
         return "admin/category/add";
     }
 
-    /**카테고리 추가**/
+    /**
+     * 카테고리 추가
+     **/
     @PostMapping("/category/addCategory.do")
-    public String categoryAdd(@Validated CategoryInput categoryDto){
-        Optional<Category> categoryOptional = categoryRepository.findById(categoryDto.getSubCategoryName());
-        if(categoryOptional.isPresent()){
+    public String categoryAdd(@Validated CategoryInput input) {
+        Optional<Category> categoryOptional = categoryRepository.findById(input.getSubCategoryName());
+        if (categoryOptional.isPresent()) {
             throw new CategoryAlreadyExist();
         }
-        Category category = Category.builder()
-                .subCategoryName(categoryDto.getSubCategoryName())
-                .categoryName(categoryDto.getCategoryName())
-                .build();
+        Category category = Category.of(input);
         categoryRepository.save(category);
         return "redirect:/admin/category/list.do";
     }
 
-    /**회원 관리**/
+    /**
+     * 회원 관리
+     **/
     @GetMapping("/member/list.do")
-    public String memberList(Model model){
+    public String memberList(Model model) {
         List<User> users = userRepository.findAll();
 
         model.addAttribute("users", users);
@@ -135,76 +146,78 @@ public class AdminController {
     }
 
     @PostMapping("/member/stateUpdate")
-    public String memberStatusUpdate(@RequestParam String userId, @RequestParam UserStatus userStatus){
-        User user= userRepository.findById(userId).get();
+    public String memberStatusUpdate(@RequestParam String userId, @RequestParam UserStatus userStatus) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFound::new);
         user.setUserStatus(userStatus);
         userRepository.save(user);
 
         return "redirect:/admin/user/list.do";
     }
 
-    /** 미승인 qna 리스트**/
+    /**
+     * 미승인 qna 리스트
+     **/
     @GetMapping("/qna/list.do")
-    public String qnaList(Model model){
-        List<QnA> list =  qnAService.getNotAnswer();
+    public String qnaList(Model model) {
+        List<QnA> list = qnAService.getNotAnswer();
         model.addAttribute("list", list);
 
         return "/admin/qna/list";
     }
-    /** 답변 폼**/
+
+    /**
+     * 답변 폼
+     **/
     @GetMapping("/qna/detail")
-    public String qnaList(@RequestParam long qnaId, Model model){
-        Optional<QnA> optionalQnA = qnARepository.findById(qnaId);
-        if(optionalQnA.isEmpty()){
-            throw new RuntimeException("QNA가 없습니다.");
-        }
-        QnA qna = optionalQnA.get();
+    public String qnaList(@RequestParam long qnaId, Model model) {
+        QnA qna = qnARepository.findById(qnaId).orElseThrow(QnaNotFound::new);
         model.addAttribute(qna);
         return "/admin/qna/detail";
     }
 
-    /** qna 승인 **/
+    /**
+     * qna 승인
+     **/
     @PostMapping("/qna/submit")
-    public String qnaSubmit(@RequestParam String answer, @RequestParam long qnaId){
-        Optional<QnA> optionalQnA = qnARepository.findById(qnaId);
-        if(optionalQnA.isEmpty()){
-            throw new RuntimeException("QNA가 없습니다.");
-        }
-        QnA qna = optionalQnA.get();
+    public String qnaSubmit(@RequestParam String answer, @RequestParam long qnaId) {
+        QnA qna = qnARepository.findById(qnaId).orElseThrow(QnaNotFound::new);
+
         qna.setAnswer(answer);
         qnARepository.save(qna);
 
         return "redirect:/admin/qna/list.do";
     }
-    /** 승인완료가 끝나지 않은 eventList **/
+
+    /**
+     * 승인완료가 끝나지 않은 eventList
+     **/
     @GetMapping("/event/eventList")
-    public String eventList(Model model){
+    public String eventList(Model model) {
         List<Event> list = eventRepository.findAllByStatus(EventStatus.REQ);
 
         model.addAttribute("list", list);
         return "/admin/event/eventList";
     }
-    /** 이벤트 정보 **/
+
+    /**
+     * 이벤트 정보
+     **/
     @GetMapping("/event/info")
-    public String eventInfo(Model model, @RequestParam Long eventId){
-        Optional<Event> optional = eventRepository.findById(eventId);
-        if(optional.isEmpty()){
-            throw new EventException();
-        }
-        Event event = optional.get();
+    public String eventInfo(Model model, @RequestParam Long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EventException::new);
+
         model.addAttribute("event", event);
 
         return "/admin/event/info";
     }
-    /** 이벤트 승인**/
+
+    /**
+     * 이벤트 승인
+     **/
     @Cacheable(key = "#eventId", value = CacheKey.EVENT_SUBMIT)
     @PostMapping("/event/submit.do")
-    public String eventSubmit(@RequestParam Long eventId){
-        Optional<Event> optional = eventRepository.findById(eventId);
-        if(optional.isEmpty()){
-            throw new EventException();
-        }
-        Event event = optional.get();
+    public String eventSubmit(@RequestParam Long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EventException::new);
         event.setStatus(EventStatus.COMPLETE);
 
         eventRepository.save(event);

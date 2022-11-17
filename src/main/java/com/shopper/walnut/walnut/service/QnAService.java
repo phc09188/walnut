@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,14 +24,16 @@ public class QnAService {
     private final QnARepository qnARepository;
     private final UserRepository userRepository;
 
-    /** 추가 **/
+    /**
+     * 추가
+     **/
     public void add(User user, QnaInput input) {
         Optional<User> optionalUser = userRepository.findById(user.getUserId());
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             throw new UserNotFound();
         }
-        Optional<QnA> optional= qnARepository.findBySubject(input.getSubject());
-        if(optional.isPresent()){
+        Optional<QnA> optional = qnARepository.findBySubject(input.getSubject());
+        if (optional.isPresent()) {
             throw new QnaAlreadyExist();
         }
         QnA qna = new QnA(optionalUser.get(), input.getSubject(), input.getContent());
@@ -38,44 +41,52 @@ public class QnAService {
         qnARepository.save(qna);
     }
 
-    /** 메인 페이지에 띄울 qna만 반환**/
+    /**
+     * 메인 페이지에 띄울 qna만 반환
+     **/
     public List<QnA> searchMain() {
         List<QnA> qnas = qnARepository.findAllByStatus(QnaStatus.MAIN);
-        if(qnas.size() ==0 || qnas.isEmpty()){
+        if (qnas.size() == 0 || qnas.isEmpty()) {
             return new ArrayList<>();
         }
         return qnas;
     }
 
-    /** 질문 삭제**/
+    /**
+     * 질문 삭제
+     **/
     public void delete(long qnaId) {
         Optional<QnA> optional = qnARepository.findById(qnaId);
-        if(optional.isEmpty()){
+        if (optional.isEmpty()) {
             throw new QnaNotFound();
         }
         qnARepository.delete(optional.get());
     }
 
-    /** 타입 별 질문 리스트 **/
+    /**
+     * 타입 별 질문 리스트
+     **/
     public List<QnA> typeMain(QnaType type) {
-        List<QnA> list =  qnARepository.findAllByType(type);
-        if(list.size() ==0 || list.isEmpty()){
+        List<QnA> list = qnARepository.findAllByType(type);
+        if (list.size() == 0 || list.isEmpty()) {
             return new ArrayList<>();
         }
         return list;
     }
 
-    /** 타입별 리스트 **/
-    public List<QnaType> getList(){
+    /**
+     * 타입별 리스트
+     **/
+    public List<QnaType> getList() {
         List<QnaType> list = new ArrayList<>();
-        for(QnaType a : QnaType.values()){
-            list.add(a);
-        }
+        Collections.addAll(list, QnaType.values());
         return list;
     }
 
-    /** 아직 답 없는 qna 리스트**/
-    public List<QnA> getNotAnswer(){
+    /**
+     * 아직 답 없는 qna 리스트
+     **/
+    public List<QnA> getNotAnswer() {
         return qnARepository.findAllByAnswer("");
     }
 

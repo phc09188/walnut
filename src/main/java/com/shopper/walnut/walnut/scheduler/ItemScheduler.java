@@ -8,7 +8,6 @@ import com.shopper.walnut.walnut.repository.BrandItemRepository;
 import com.shopper.walnut.walnut.repository.ItemRepository;
 import com.shopper.walnut.walnut.service.BrandService;
 import com.shopper.walnut.walnut.service.CacheService;
-import com.shopper.walnut.walnut.service.ItemService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
@@ -28,18 +27,14 @@ public class ItemScheduler {
     private final BrandItemRepository brandItemRepository;
     private final ItemRepository itemRepository;
     private final BrandService brandService;
-    private final ItemService itemService;
     private final CacheService cacheService;
 
     /**
-     * brandItemService -> 물품등록하면 cache에 저장
-     * 매일 자정 캐시를 통한 물품 업데이트
      * 유저 캐시 정보 전체 삭제
      */
     @Scheduled(cron = "0 0 0 * * *")
     public void itemScheduling() throws MessagingException, IOException {
         log.info("itemScheduling is started");
-        itemService.itemUpdate();
         cacheService.cacheInitialization();
     }
 
@@ -50,21 +45,21 @@ public class ItemScheduler {
      * 만일 물품 수량이 0개가 되었을 경우 해당 Brand에 알림 메일 전송
      */
     @Scheduled(cron = "0 0 0/1 * * *")
-    public void itemCountScheduling(){
+    public void itemCountScheduling() {
         log.info("itemCountScheduling start");
         List<BrandItem> brandItemList = brandItemRepository.findAll();
-        for(BrandItem brandItem : brandItemList){
+        for (BrandItem brandItem : brandItemList) {
             Optional<Item> optional = itemRepository.findByBrandItemId(brandItem.getBrandItemId());
-            if(optional.isEmpty()){
+            if (optional.isEmpty()) {
                 throw new ItemNotFound();
             }
             Item item = optional.get();
-            if(item.getCnt() != brandItem.getCnt()){
+            if (item.getCnt() != brandItem.getCnt()) {
                 brandItem.setCnt(item.getCnt());
                 brandItem.setTotalTake(item.getTotalTake());
                 brandItem.setPayAmount(item.getPayAmount());
                 brandItem.setSaleStatus(item.getSaleStatus());
-                if(!item.getSaleStatus().equals(ItemStatus.ITEM_STATUS_ING)){
+                if (item.getSaleStatus() != ItemStatus.ITEM_STATUS_ING) {
                     brandService.sendEmail(brandItem);
                 }
             }

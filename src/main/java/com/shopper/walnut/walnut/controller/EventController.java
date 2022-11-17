@@ -34,41 +34,48 @@ public class EventController {
     private final EventRepository eventRepository;
 
 
-    /** 이벤트 리스트 **/
+    /**
+     * 이벤트 리스트
+     **/
     @Cacheable(key = "#model.asMap()", value = CacheKey.EVENTLIST)
     @GetMapping("/eventList")
-    public String eventList(Model model, @AuthenticationPrincipal User logInUser){
-        Optional<Brand> optional =  brandRepository.findByBrandLoginId(logInUser.getUsername());
-        if(optional.isEmpty()){
+    public String eventList(Model model, @AuthenticationPrincipal User logInUser) {
+        Optional<Brand> optional = brandRepository.findByBrandLoginId(logInUser.getUsername());
+        if (optional.isEmpty()) {
             throw new BrandNotFound();
         }
         Brand brand = optional.get();
-        List<Event> events =  eventRepository.findAllByBrand(brand);
+        List<Event> events = eventRepository.findAllByBrand(brand);
         model.addAttribute("brand", brand);
-        model.addAttribute("events",events);
+        model.addAttribute("events", events);
         return "/brand/main/eventList";
     }
-    /** 추가 폼 **/
+
+    /**
+     * 추가 폼
+     **/
     @GetMapping("/event/addForm")
-    public String eventAddForm(Model model, @RequestParam Long brandId){
+    public String eventAddForm(Model model, @RequestParam Long brandId) {
         Optional<Brand> optional = brandRepository.findById(brandId);
-        if(optional.isEmpty()){
+        if (optional.isEmpty()) {
             throw new BrandNotFound();
         }
         model.addAttribute("brand", optional.get());
         return "/brand/main/eventAdd";
     }
 
-    /** 추가 !! **/
+    /**
+     * 추가 !!
+     **/
     @CacheEvict(value = CacheKey.EVENTLIST, allEntries = true)
     @PostMapping("/event/add.do")
-    public String eventAdd(EventInput input, MultipartFile file){
+    public String eventAdd(EventInput input, MultipartFile file) {
         Optional<Brand> optional = brandRepository.findById(input.getBrandId());
-        if(optional.isEmpty()){
+        if (optional.isEmpty()) {
             throw new BrandNotFound();
         }
         Brand brand = optional.get();
-        String detail =  fileUtil.FileUrl(file, "event");
+        String detail = fileUtil.FileUrl(file, "event");
         String[] details = detail.split(",");
         input.setFileName(details[0]);
         input.setUrlFileName(details[1]);
@@ -78,12 +85,14 @@ public class EventController {
         return "redirect:/brand/main/eventList";
     }
 
-    /** 삭제 **/
+    /**
+     * 삭제
+     **/
     @CacheEvict(value = CacheKey.EVENTLIST, allEntries = true)
     @PostMapping("/event/delete.do")
-    public String eventDelete(@RequestParam Long eventId){
-        Optional<Event> optional =  eventRepository.findById(eventId);
-        if(optional.isEmpty()){
+    public String eventDelete(@RequestParam Long eventId) {
+        Optional<Event> optional = eventRepository.findById(eventId);
+        if (optional.isEmpty()) {
             throw new EventException();
         }
         Event event = optional.get();

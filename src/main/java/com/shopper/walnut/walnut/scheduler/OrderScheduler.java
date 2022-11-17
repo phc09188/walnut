@@ -24,12 +24,12 @@ public class OrderScheduler {
      * 배송 완료가 7일이 지난 주문 정보들은 삭제한다.
      */
     @Scheduled(cron = "0 0 0 1 * *")
-    public void oldOrderHistoryDelete(){
+    public void oldOrderHistoryDelete() {
         List<Order> orders = orderRepository.findAll();
         LocalDateTime now = LocalDateTime.now();
-        for(Order x : orders){
-            LocalDateTime dt =  x.getDelivery().getDeliverySuccessDt();
-            if(dt.plusDays(7).isAfter(now)){
+        for (Order x : orders) {
+            LocalDateTime dt = x.getDelivery().getDeliverySuccessDt();
+            if (dt.plusDays(7).isAfter(now)) {
                 long orderId = x.getOrderId();
                 orderRepository.delete(x);
                 log.info(orderId + "주문 히스토리 삭제");

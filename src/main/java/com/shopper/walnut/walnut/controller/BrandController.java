@@ -1,6 +1,7 @@
 package com.shopper.walnut.walnut.controller;
 
 import com.shopper.walnut.walnut.exception.error.BrandNotFound;
+import com.shopper.walnut.walnut.exception.error.OrderNotFound;
 import com.shopper.walnut.walnut.model.dto.BrandDto;
 import com.shopper.walnut.walnut.model.dto.BrandItemDto;
 import com.shopper.walnut.walnut.model.entity.*;
@@ -20,20 +21,15 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,30 +44,33 @@ public class BrandController {
     private final BrandItemService brandItemService;
     private final CategoryService categoryService;
     private final OrderService orderService;
-    private final DeliveryService deliveryService;
     private final FileUtil fileUtil;
 
-    /** 메인페이지 **/
+    /**
+     * 메인페이지
+     **/
     @GetMapping("/main/detail.do")
-    public String brandMain(Model model, @AuthenticationPrincipal User user){
-        String brandLogInId = user.getUsername();
-        Optional<Brand> optionalBrand = brandRepository.findByBrandLoginId(brandLogInId);
-        if(optionalBrand.isEmpty()){
-            throw new BrandNotFound();
-        }
-        Brand brand = optionalBrand.get();
+    public String brandMain(Model model, @AuthenticationPrincipal User user) {
+        Brand brand = brandRepository.findByBrandLoginId(user.getUsername())
+                .orElseThrow(BrandNotFound::new);
         model.addAttribute("brandInfo", brand);
 
         return "brand/main/detail";
 
     }
-    /** 입점 신청 폼 **/
+
+    /**
+     * 입점 신청 폼
+     **/
     @GetMapping("/register")
     public String add(Model model) {
-        model.addAttribute("brandForm",new BrandDto());
+        model.addAttribute("brandForm", new BrandDto());
         return "brand/add";
     }
-    /** 입점 신청 **/
+
+    /**
+     * 입점 신청
+     **/
     @PostMapping("/register.do")
     public String addSubmit(MultipartFile file
             , @Validated BrandInput parameter) {
@@ -85,76 +84,95 @@ public class BrandController {
     }
 
 
-    /** 아이템 리스트 출력 **/
+    /**
+     * 아이템 리스트 출력
+     **/
     @GetMapping("/main/item.do")
-    public String brandItemList(Model model, @AuthenticationPrincipal User user){
-        Optional<Brand> brand = brandRepository.findByBrandLoginId(user.getUsername());
-        List<BrandItem> brandItemList = brandItemRepository.findAllByBrand(brand.get());
-        model.addAttribute("brandItemList",brandItemList);
+    public String brandItemList(Model model, @AuthenticationPrincipal User user) {
+        Brand brand = brandRepository.findByBrandLoginId(user.getUsername())
+                .orElseThrow(BrandNotFound::new);
+        List<BrandItem> brandItemList = brandItemRepository.findAllByBrand(brand);
+        model.addAttribute("brandItemList", brandItemList);
 
         return "brand/main/item";
     }
 
-    /** 아이템 추가 or Edit **/
+    /**
+     * 아이템 추가 or Edit
+     **/
     @GetMapping(value = {"/main/item-add.do", "/main/item-edit.do"})
-    public String itemAddForm(HttpServletRequest req,Model model, BrandItemDto dto){
+    public String itemAddForm(HttpServletRequest req, Model model, BrandItemDto dto) {
         boolean isEdit = req.getRequestURI().contains("/item-edit");
         BrandItemDto dto2 = new BrandItemDto();
-        if(isEdit){
+        if (isEdit) {
             long id = dto.getBrandItemId();
             BrandItemDto item = brandItemService.getById(id);
-            if(item == null){
+            if (item == null) {
                 model.addAttribute("message", "상품정보가 없습니다.");
                 return "common/error";
             }
             dto2 = item;
         }
         model.addAttribute("isEdit", isEdit);
-        model.addAttribute("category",categoryService.list());
+        model.addAttribute("category", categoryService.list());
         model.addAttribute("detail", dto2);
 
         return "brand/main/item-add";
     }
-    /**상품 등록**/
+
+    /**
+     * 상품 등록
+     **/
     @PostMapping("/main/item/add.do")
     public String itemAdd(@AuthenticationPrincipal User user,
                           MultipartFile file,
-                          BrandItemInput parameter){
-        String[] utils = fileUtil.FileUrl(file,"item").split(",");
-        parameter.setFileName(utils[0]); parameter.setFileUrl(utils[1]);
+                          BrandItemInput parameter) {
+        String[] utils = fileUtil.FileUrl(file, "item").split(",");
+        parameter.setFileName(utils[0]);
+        parameter.setFileUrl(utils[1]);
         Category category = categoryService.findCategoryName(parameter.getSubCategoryName());
         parameter.setCategoryName(category.getCategoryName());
-        Optional<Brand> optionalBrand = brandRepository.findByBrandLoginId(user.getUsername());
-        brandItemService.add(parameter, optionalBrand.get());
+        Brand brand = brandRepository.findByBrandLoginId(user.getUsername())
+                .orElseThrow(BrandNotFound::new);
+        brandItemService.add(parameter, brand);
         return "redirect:/brand/main/item.do";
     }
-    /**주문리스트**/
+
+    /**
+     * 주문리스트
+     **/
     @GetMapping("/main/orderList")
     public String orderList(@AuthenticationPrincipal User logInUser
-            ,@ModelAttribute("orderInput") OrderInput orderInput, Model model){
-        Brand brand = brandRepository.findByBrandLoginId(logInUser.getUsername()).get();
+            , @ModelAttribute("orderInput") OrderInput orderInput, Model model) {
+        Brand brand = brandRepository.findByBrandLoginId(logInUser.getUsername())
+                .orElseThrow(BrandNotFound::new);
         List<Order> orders = orderService.findAllByString(orderInput, brand);
         model.addAttribute("orders", orders);
         return "/brand/main/orderList";
     }
 
-    /** 매출 확인 **/
+    /**
+     * 매출 확인
+     **/
     @GetMapping("/main/account.do")
-    public String account(@AuthenticationPrincipal User logInUser, Model model){
-        Brand brand = brandRepository.findByBrandLoginId(logInUser.getUsername()).get();
+    public String account(@AuthenticationPrincipal User logInUser, Model model) {
+        Brand brand = brandRepository.findByBrandLoginId(logInUser.getUsername())
+                .orElseThrow(BrandNotFound::new);
         List<BrandItem> items = brandItemRepository.findAllByBrand(brand);
-        long amount =  brandItemService.findTotalAmount(items);
+        long amount = brandItemService.findTotalAmount(items);
         model.addAttribute("items", items);
         model.addAttribute("total", amount);
         return "/brand/main/account";
     }
 
-    /** 배송 상태 변경 **/
+    /**
+     * 배송 상태 변경
+     **/
     @PostMapping("/main/order/edit.do")
-    public String deliveryEdit(@RequestParam Long orderId, @RequestParam DeliveryStatus status){
-        Order order = orderRepository.findById(orderId).get();
+    public String deliveryEdit(@RequestParam Long orderId, @RequestParam DeliveryStatus status) {
+        Order order = orderRepository.findById(orderId).orElseThrow(OrderNotFound::new);
         order.getDelivery().setStatus(status);
-        if(status == DeliveryStatus.COMPLETE){
+        if (status == DeliveryStatus.COMPLETE) {
             order.setStatus(OrderStatus.COMPLETE);
             order.getDelivery().setDeliverySuccessDt(LocalDateTime.now());
         }

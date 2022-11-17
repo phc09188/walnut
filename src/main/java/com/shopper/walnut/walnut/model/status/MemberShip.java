@@ -6,10 +6,12 @@ public enum MemberShip {
     GOLD("GOLD"),
     PLATINUM("PLATINUM"),
     DIAMOND("DIAMOND");
-    private String value;
+    private final String value;
+
     MemberShip(String value) {
         this.value = value;
     }
+
     public String getKey() {
         return name();
     }

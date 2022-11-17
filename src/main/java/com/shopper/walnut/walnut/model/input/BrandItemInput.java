@@ -1,13 +1,10 @@
 package com.shopper.walnut.walnut.model.input;
 
 
-import com.shopper.walnut.walnut.model.entity.Brand;
 import com.shopper.walnut.walnut.model.entity.BrandItem;
 import lombok.*;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.time.LocalDate;
-import java.util.Random;
 
 @Setter @Getter @Builder @ToString
 @AllArgsConstructor @NoArgsConstructor
@@ -26,9 +23,7 @@ public class BrandItemInput {
     String fileUrl;
 
     public static BrandItem of(BrandItemInput input) {
-
-
-        BrandItem item = BrandItem.builder()
+        return BrandItem.builder()
                 .itemName(input.itemName)
                 .fileName(input.fileName)
                 .urlFileName(input.fileUrl)
@@ -46,6 +41,5 @@ public class BrandItemInput {
                 .saleStatus(input.saleStatus)
                 .cnt(input.cnt)
                 .build();
-        return item;
     }
 }

@@ -1,12 +1,12 @@
 package com.shopper.walnut.walnut.model.entity;
 
+import com.shopper.walnut.walnut.model.input.CategoryInput;
 import com.shopper.walnut.walnut.model.input.CategoryName;
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Getter @Setter @Builder
 @AllArgsConstructor @NoArgsConstructor
@@ -18,6 +18,13 @@ public class Category implements CategoryName {
     private String subCategoryName;
     //상의 하의 아우터
     private String categoryName;
+
+    public static Category of(CategoryInput input){
+        return Category.builder()
+                .subCategoryName(input.getSubCategoryName())
+                .categoryName(input.getCategoryName())
+                .build();
+    }
 
 
 }

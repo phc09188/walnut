@@ -7,7 +7,8 @@ public enum QnaType {
     CART("장바구니"),
     SIGN("회원가입");
 
-    private String value;
+    private final String value;
+
     QnaType(String value) {
         this.value = value;
     }

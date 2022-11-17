@@ -5,10 +5,12 @@ public enum EventStatus {
     COMPLETE("승인 완료"),
     CANCEL("이벤트 취소");
 
-    private String value;
+    private final String value;
+
     EventStatus(String value) {
         this.value = value;
     }
+
     public String getKey() {
         return name();
     }

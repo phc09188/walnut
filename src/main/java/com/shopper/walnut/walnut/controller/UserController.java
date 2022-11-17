@@ -1,8 +1,8 @@
 package com.shopper.walnut.walnut.controller;
 
+import com.shopper.walnut.walnut.exception.error.UserNotFound;
 import com.shopper.walnut.walnut.model.entity.Order;
 import com.shopper.walnut.walnut.model.entity.User;
-import com.shopper.walnut.walnut.model.input.OrderInput;
 import com.shopper.walnut.walnut.model.input.UserInput;
 import com.shopper.walnut.walnut.repository.OrderRepository;
 import com.shopper.walnut.walnut.repository.UserRepository;
@@ -58,7 +58,7 @@ public class UserController {
     @GetMapping("/myPage")
     public String myPage(@AuthenticationPrincipal org.springframework.security.core.userdetails.User logInUser,
                          Model model){
-        User user = userRepository.findById(logInUser.getUsername()).get();
+        User user = userRepository.findById(logInUser.getUsername()).orElseThrow(UserNotFound::new);
         String memberShip =  userService.memberShip(user);
 
         model.addAttribute("user" ,user);
@@ -70,7 +70,7 @@ public class UserController {
     @GetMapping("/cache")
     public String cacheRefill(Model model,
                               @AuthenticationPrincipal org.springframework.security.core.userdetails.User logInUser){
-        User user =  userRepository.findById(logInUser.getUsername()).get();
+        User user =  userRepository.findById(logInUser.getUsername()).orElseThrow(UserNotFound::new);
         model.addAttribute("user", user);
         return "user/cacheRefill";
     }
@@ -85,7 +85,7 @@ public class UserController {
     @GetMapping("/orderList")
     public String orderList(@AuthenticationPrincipal org.springframework.security.core.userdetails.User logInUser,
                             Model model){
-        User user = userRepository.findById(logInUser.getUsername()).get();
+        User user = userRepository.findById(logInUser.getUsername()).orElseThrow(UserNotFound::new);
         List<Order> orders = orderRepository.findAllByUser(user);
 
         model.addAttribute("orders", orders);
@@ -96,7 +96,7 @@ public class UserController {
     @GetMapping("/info")
     public String userInfo(@AuthenticationPrincipal org.springframework.security.core.userdetails.User logInUser,
                            Model model){
-        User user = userRepository.findById(logInUser.getUsername()).get();
+        User user = userRepository.findById(logInUser.getUsername()).orElseThrow(UserNotFound::new);
 
         model.addAttribute("user", user);
         return "/user/info";
@@ -104,7 +104,7 @@ public class UserController {
     /** 회원정보 수정 **/
     @PostMapping("/info/update")
     public String userUpdate(UserInput input){
-        User user = userRepository.findById(input.getUserId()).get();
+        User user = userRepository.findById(input.getUserId()).orElseThrow(UserNotFound::new);
         userService.userUpdate(user, input);
         return "redirect:/user/logout";
     }
@@ -112,7 +112,7 @@ public class UserController {
     /** 회원 탈퇴 **/
     @PostMapping("/withdraw")
     public String userWithdraw(@RequestParam String userId){
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId).orElseThrow(UserNotFound::new);
         userRepository.delete(user);
         return "redirect:/";
     }

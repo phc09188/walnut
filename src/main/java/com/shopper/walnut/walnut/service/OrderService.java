@@ -1,5 +1,8 @@
 package com.shopper.walnut.walnut.service;
 
+import com.shopper.walnut.walnut.exception.error.BrandNotFound;
+import com.shopper.walnut.walnut.exception.error.ItemNotFound;
+import com.shopper.walnut.walnut.exception.error.UserNotFound;
 import com.shopper.walnut.walnut.model.entity.*;
 import com.shopper.walnut.walnut.model.input.OrderInput;
 import com.shopper.walnut.walnut.model.status.DeliveryStatus;
@@ -18,16 +21,19 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final BrandRepository brandRepository;
-    /**주문 + 장바구니 편집**/
-    public Long order(String userId, Long itemId, Long count, Long point ,Long payAmount) {
 
-        User member = userRepository.findById(userId).get();
-        Item item = itemRepository.findById(itemId).get();
-        Brand brand = brandRepository.findById(item.getBrandId()).get();
+    /**
+     * 주문 + 장바구니 편집
+     **/
+    public Long order(String userId, Long itemId, Long count, Long point, Long payAmount) {
+
+        User member = userRepository.findById(userId).orElseThrow(UserNotFound::new);
+        Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFound::new);
+        Brand brand = brandRepository.findById(item.getBrandId()).orElseThrow(BrandNotFound::new);
         member.setUserPoint(member.getUserPoint() - point);
         member.setUserCache(member.getUserCache() - payAmount);
         item.setTotalTake(payAmount);
-        item.setPayAmount(item.getPayAmount()+count);
+        item.setPayAmount(item.getPayAmount() + count);
 
         Delivery delivery = new Delivery();
         delivery.setAddress(member.getAddress());
@@ -35,32 +41,34 @@ public class OrderService {
 
         OrderItem orderItem = OrderItem.createOrderItem(item, item.getPrice(), count);
 
-        Order order = Order.createOrder(member,brand, delivery, orderItem);
+        Order order = Order.createOrder(member, brand, delivery, orderItem);
         orderRepository.save(order);
         userRepository.save(member);
-        Optional<Cart> optionalCart = cartRepository.findByUserAndItem(member,item);
-        if(optionalCart.isPresent()){
-            cartRepository.delete(optionalCart.get());
-        }
+        Optional<Cart> optionalCart = cartRepository.findByUserAndItem(member, item);
+        optionalCart.ifPresent(cartRepository::delete);
         return order.getOrderId();
     }
-    /**주문취소**/
+
+    /**
+     * 주문취소
+     **/
     public void cancelOrder(Order order) {
         orderRepository.delete(order);
     }
 
-    /** OrderInput에 status와 이름을 입력받아 리스트 반환**/
+    /**
+     * OrderInput에 status와 이름을 입력받아 리스트 반환
+     **/
     public List<Order> findAllByString(OrderInput orderSearch, Brand brand) {
-        if(orderSearch.getUserName() == null && orderSearch.getOrderStatus() == null){
+        if (orderSearch.getUserName() == null && orderSearch.getOrderStatus() == null) {
             return orderRepository.findAllByBrand(brand);
-        }else if(orderSearch.getOrderStatus().equals("")&& orderSearch.getUserName() != null){
+        } else if (orderSearch.getOrderStatus().equals("") && orderSearch.getUserName() != null) {
             User user = userRepository.findByUserName(orderSearch.getUserName()).get();
-            return orderRepository.findAllByUserAndBrand(user,brand);
-        }else if(orderSearch.getUserName().equals("") && orderSearch.getOrderStatus() != null){
-            String key = orderSearch.getOrderStatus().getKey(); String value = orderSearch.getOrderStatus().getValue();
+            return orderRepository.findAllByUserAndBrand(user, brand);
+        } else if (orderSearch.getUserName().equals("") && orderSearch.getOrderStatus() != null) {
             return orderRepository.findAllByStatusAndBrand(orderSearch.getOrderStatus(), brand);
-        }else{
-            User user = userRepository.findByUserName(orderSearch.getUserName()).get();
+        } else {
+            User user = userRepository.findByUserName(orderSearch.getUserName()).orElseThrow(UserNotFound::new);
             return orderRepository.findAllByUserAndStatusAndBrand(user, orderSearch.getOrderStatus(), brand);
         }
     }

@@ -3,7 +3,6 @@ package com.shopper.walnut.walnut.model.dto;
 import com.shopper.walnut.walnut.model.entity.Brand;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

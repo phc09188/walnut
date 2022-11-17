@@ -12,6 +12,8 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllByBrand(Brand brand);
+
     List<Event> findAllByStatus(EventStatus status);
+
     List<Event> findAllBySignDateGreaterThanEqualAndSignDateLessThanEqual(LocalDate start, LocalDate now);
 }

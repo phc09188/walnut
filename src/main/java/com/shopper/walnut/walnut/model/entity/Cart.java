@@ -3,8 +3,7 @@ package com.shopper.walnut.walnut.model.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Getter
 @Setter

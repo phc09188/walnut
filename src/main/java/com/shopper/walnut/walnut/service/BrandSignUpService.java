@@ -21,16 +21,18 @@ public class BrandSignUpService {
     private final UserRepository userRepository;
 
 
-    /** 브랜드 입점**/
-    public void register(BrandInput parameter){
+    /**
+     * 브랜드 입점
+     **/
+    public void register(BrandInput parameter) {
         Optional<User> optionalUser = userRepository.findById(parameter.getBrandLoginId());
         Optional<Brand> optionalBrand = brandRepository.findByBrandName(parameter.getBrandName());
-        if(optionalBrand.isPresent() && optionalUser.isPresent()){
+        if (optionalBrand.isPresent() && optionalUser.isPresent()) {
             throw new BrandAlreadyExist();
         }
         String encPassword = BCrypt.hashpw(parameter.getBrandPassword(), BCrypt.gensalt());
-        Address address = new Address(parameter.getZipCode(),parameter.getStreetAdr(),parameter.getDetailAdr());
-        Brand brand = Brand.of(parameter,encPassword, address);
+        Address address = new Address(parameter.getZipCode(), parameter.getStreetAdr(), parameter.getDetailAdr());
+        Brand brand = Brand.of(parameter, encPassword, address);
         brandRepository.save(brand);
         userRepository.save(User.toSign(brand));
     }

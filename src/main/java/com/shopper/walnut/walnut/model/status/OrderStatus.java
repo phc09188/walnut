@@ -5,7 +5,8 @@ public enum OrderStatus {
     COMPLETE("COMPLETE"),
     CANCEL("CANCEL");
 
-    private String value;
+    private final String value;
+
     OrderStatus(String value) {
         this.value = value;
     }

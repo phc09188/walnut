@@ -1,7 +1,6 @@
 package com.shopper.walnut.walnut.model.entity;
 
 
-import com.shopper.walnut.walnut.controller.BrandController;
 import com.shopper.walnut.walnut.model.input.UserClassification;
 import com.shopper.walnut.walnut.model.input.UserInput;
 import com.shopper.walnut.walnut.model.status.MemberShip;

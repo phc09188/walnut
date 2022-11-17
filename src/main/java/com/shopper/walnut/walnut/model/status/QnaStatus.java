@@ -6,7 +6,8 @@ public enum QnaStatus {
     MAIN("MAIN"),
     DENIED("DENIED");
 
-    private String value;
+    private final String value;
+
     QnaStatus(String value) {
         this.value = value;
     }

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>이벤트관리</title>
+</head>
+<body>
+<div th:replace="/fragments/layout.html :: fragment-admin-body-menu"></div>
+<div class="container">
+    <table>
+        <thead>
+        <tr>
+            <th>NO</th>
+            <th>주제</th>
+            <th>.</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="x : ${list}">
+            <td><p th:text="${x.eventId}"></p></td>
+            <td><p th:text="${x.subject}"></p> </td>
+            <td><a th:href="@{/admin/event/info(eventId=${x.eventId})}">상세정보</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

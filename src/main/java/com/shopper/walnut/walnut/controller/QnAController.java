@@ -2,6 +2,7 @@ package com.shopper.walnut.walnut.controller;
 
 import com.shopper.walnut.walnut.exception.error.QnaNotFound;
 import com.shopper.walnut.walnut.exception.error.UserNotFound;
+import com.shopper.walnut.walnut.model.constant.CacheKey;
 import com.shopper.walnut.walnut.model.entity.QnA;
 import com.shopper.walnut.walnut.model.input.QnaInput;
 import com.shopper.walnut.walnut.model.type.QnaType;
@@ -9,6 +10,8 @@ import com.shopper.walnut.walnut.repository.QnARepository;
 import com.shopper.walnut.walnut.repository.UserRepository;
 import com.shopper.walnut.walnut.service.QnAService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -41,8 +44,9 @@ public class QnAController {
     }
 
     /** QNA리스트 & 메인페이지 **/
+    @Cacheable(key = "#user.username", value = CacheKey.QNA_MAIN)
     @GetMapping("/main")
-    public String qnaMain(Model model){
+    public String qnaMain(Model model, @AuthenticationPrincipal User user){
         List<QnA> qnas = qnAService.searchMain();
 
         model.addAttribute("types", qnAService.getList());
@@ -61,6 +65,7 @@ public class QnAController {
         model.addAttribute("qna",optionalQnA.get());
         return "/qna/detail";
     }
+
     /** qna 추가 폼 **/
     @GetMapping("/add")
     public String qnaAddForm(@ModelAttribute("qnaInput") QnaInput qnaInput, Model model){
@@ -81,6 +86,7 @@ public class QnAController {
     }
 
     /**  qna 삭제 **/
+    @CacheEvict(value = CacheKey.QNA_MAIN, allEntries = true)
     @PostMapping("/delete.do")
     public String qnaDelete(@RequestParam long qnaId){
         qnAService.delete(qnaId);

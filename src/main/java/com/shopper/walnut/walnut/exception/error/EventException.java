@@ -2,7 +2,8 @@ package com.shopper.walnut.walnut.exception.error;
 
 import com.shopper.walnut.walnut.exception.BasicException;
 import org.springframework.http.HttpStatus;
-public class UserEmailExist extends BasicException {
+
+public class EventException extends BasicException {
     @Override
     public int getStatusCode() {
         return HttpStatus.CONFLICT.value();
@@ -10,6 +11,6 @@ public class UserEmailExist extends BasicException {
 
     @Override
     public String getMessage() {
-        return "이미 해당 이메일의 계정이 존재합니다.";
+        return "이벤트가 이미 존재합니다..";
     }
 }

@@ -12,6 +12,7 @@ import java.util.Random;
 @Setter @Getter @Builder @ToString
 @AllArgsConstructor @NoArgsConstructor
 public class BrandItemInput {
+    private long brandItemId;
     private String itemName;
     private long price;
     private long salePrice;

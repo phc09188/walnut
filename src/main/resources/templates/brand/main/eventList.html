@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>이벤트관리</title>
+</head>
+<body>
+<div th:replace="/fragments/layout.html :: fragment-brand-body-menu"></div>
+<div class="buttons">
+    <a th:href="@{/brand/main/event/addForm(brandId = ${brand.brandId})}">이벤트 신청</a>
+</div>
+<div class="container">
+    <table>
+        <thead>
+        <tr>
+            <th>홍보 사진</th>
+            <th>주제</th>
+            <th>세부내용</th>
+            <th>승인 상태</th>
+            <th>이벤트 취소</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="x : ${events}">
+            <form th:object="${x}" th:action="@{/brand/main/event/delete.do}" method="post">
+                <input type="hidden" name="eventId" th:value="${x.eventId}">
+                <td><img name="urlFileName" th:src="${x.urlFileName}"></td>
+                <td><p th:text="${x.subject}"></p></td>
+                <td><p th:text="${x.content}"></p> </td>
+                <td>
+                    <p th:if="${x.status.name() == 'REQ'}">승인 대기 중</p>
+                    <p th:if="${x.status.name() == 'COMPLETE'}">승인 완료</p>
+                    <p th:if="${x.status.name() =='CANCEL'}">삭제된 이벤트</p>
+                </td>
+                <td>
+                    <button th:if="${x.status.name() == 'REQ'}" type="submit"> 취소 </button>
+                    <p th:if="${x.status.name() != 'REQ'}">승인이 완료된 이벤트는 취소할 수 없습니다.</p>
+                </td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

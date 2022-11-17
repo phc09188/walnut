@@ -2,21 +2,19 @@ package com.shopper.walnut.walnut.controller;
 
 import com.shopper.walnut.walnut.exception.error.CategoryAlreadyExist;
 import com.shopper.walnut.walnut.exception.error.CategoryNotExist;
+import com.shopper.walnut.walnut.exception.error.EventException;
+import com.shopper.walnut.walnut.model.constant.CacheKey;
 import com.shopper.walnut.walnut.model.dto.BrandDto;
 import com.shopper.walnut.walnut.model.dto.CategoryDto;
-import com.shopper.walnut.walnut.model.entity.Brand;
-import com.shopper.walnut.walnut.model.entity.Category;
-import com.shopper.walnut.walnut.model.entity.QnA;
-import com.shopper.walnut.walnut.model.entity.User;
+import com.shopper.walnut.walnut.model.entity.*;
 import com.shopper.walnut.walnut.model.status.BrandStatus;
 import com.shopper.walnut.walnut.model.input.CategoryInput;
+import com.shopper.walnut.walnut.model.status.EventStatus;
 import com.shopper.walnut.walnut.model.status.UserStatus;
-import com.shopper.walnut.walnut.repository.BrandRepository;
-import com.shopper.walnut.walnut.repository.CategoryRepository;
-import com.shopper.walnut.walnut.repository.QnARepository;
-import com.shopper.walnut.walnut.repository.UserRepository;
+import com.shopper.walnut.walnut.repository.*;
 import com.shopper.walnut.walnut.service.QnAService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -38,6 +36,7 @@ public class AdminController {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final QnARepository qnARepository;
+    private final EventRepository eventRepository;
 
     /**관리자 메인**/
     @GetMapping("/main.do")
@@ -102,6 +101,7 @@ public class AdminController {
         categoryRepository.delete(category);
         return "redirect:/admin/category/list";
     }
+
     /** 카테고리 추가 폼 **/
     @GetMapping("/category/add")
     public String categoryAddForm(Model model){
@@ -163,6 +163,7 @@ public class AdminController {
         return "/admin/qna/detail";
     }
 
+    /** qna 승인 **/
     @PostMapping("/qna/submit")
     public String qnaSubmit(@RequestParam String answer, @RequestParam long qnaId){
         Optional<QnA> optionalQnA = qnARepository.findById(qnaId);
@@ -174,5 +175,39 @@ public class AdminController {
         qnARepository.save(qna);
 
         return "redirect:/admin/qna/list.do";
+    }
+    /** 승인완료가 끝나지 않은 eventList **/
+    @GetMapping("/event/eventList")
+    public String eventList(Model model){
+        List<Event> list = eventRepository.findAllByStatus(EventStatus.REQ);
+
+        model.addAttribute("list", list);
+        return "/admin/event/eventList";
+    }
+    /** 이벤트 정보 **/
+    @GetMapping("/event/info")
+    public String eventInfo(Model model, @RequestParam Long eventId){
+        Optional<Event> optional = eventRepository.findById(eventId);
+        if(optional.isEmpty()){
+            throw new EventException();
+        }
+        Event event = optional.get();
+        model.addAttribute("event", event);
+
+        return "/admin/event/info";
+    }
+    /** 이벤트 승인**/
+    @Cacheable(key = "#eventId", value = CacheKey.EVENT_SUBMIT)
+    @PostMapping("/event/submit.do")
+    public String eventSubmit(@RequestParam Long eventId){
+        Optional<Event> optional = eventRepository.findById(eventId);
+        if(optional.isEmpty()){
+            throw new EventException();
+        }
+        Event event = optional.get();
+        event.setStatus(EventStatus.COMPLETE);
+
+        eventRepository.save(event);
+        return "redirect:/admin/event/eventList";
     }
 }

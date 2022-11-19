@@ -12,6 +12,8 @@ import com.shopper.walnut.walnut.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -91,11 +93,7 @@ public class OrderController {
     /** 브랜드 자체 주문 취소 **/
     @PostMapping("/orders/{orderId}/cancel")
     public String cancelOrder(@PathVariable("orderId") Long orderId) {
-        Optional<Order> optional = orderRepository.findById(orderId);
-        if(optional.isEmpty()){
-            throw new OrderNotFound();
-        }
-        orderService.cancelOrder(optional.get());
+        orderService.cancelOrder(orderId);
         return "redirect:/brand/main/orderList";
     }
     /** 주소 변경 폼 **/

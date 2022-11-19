@@ -11,6 +11,7 @@ import com.shopper.walnut.walnut.model.status.EventStatus;
 import com.shopper.walnut.walnut.model.status.UserStatus;
 import com.shopper.walnut.walnut.repository.*;
 import com.shopper.walnut.walnut.service.QnAService;
+import com.shopper.walnut.walnut.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,7 @@ import java.util.Optional;
 @RequestMapping("/admin")
 @Controller
 public class AdminController {
+    private final UserService userService;
     private final QnAService qnAService;
     private final BrandRepository brandRepository;
     private final CategoryRepository categoryRepository;
@@ -147,9 +149,7 @@ public class AdminController {
 
     @PostMapping("/member/stateUpdate")
     public String memberStatusUpdate(@RequestParam String userId, @RequestParam UserStatus userStatus) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFound::new);
-        user.setUserStatus(userStatus);
-        userRepository.save(user);
+        userService.userStatusUpdate(userId,userStatus);
 
         return "redirect:/admin/user/list.do";
     }

@@ -5,6 +5,7 @@ import com.shopper.walnut.walnut.model.entity.Category;
 import com.shopper.walnut.walnut.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ public class CategoryService {
     /**
      * 서브카테고리로 카테고리 찾기
      **/
+    @Transactional(readOnly = true)
     public Category findCategoryName(String id) {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isEmpty()) {

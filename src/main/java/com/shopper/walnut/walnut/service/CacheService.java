@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class CacheService {
         searchNotStartEvent();
         cacheCleanUp();
     }
-
+    @Transactional(readOnly = true)
     public void searchNotStartEvent() throws MessagingException, IOException {
         List<Event> list = eventRepository.
                 findAllBySignDateGreaterThanEqualAndSignDateLessThanEqual(

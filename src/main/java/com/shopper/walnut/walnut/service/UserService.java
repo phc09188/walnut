@@ -1,5 +1,6 @@
 package com.shopper.walnut.walnut.service;
 
+import com.shopper.walnut.walnut.conponents.MailComponents;
 import com.shopper.walnut.walnut.exception.error.UserIDAlreadyExist;
 import com.shopper.walnut.walnut.exception.error.UserNotFound;
 import com.shopper.walnut.walnut.model.entity.Address;
@@ -19,6 +20,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,7 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final EventListenerRepository eventListenerRepository;
+    private final MailComponents mailComponents;
 
     /**
      * 회원가입
@@ -48,12 +52,11 @@ public class UserService implements UserDetailsService {
         eventListenerRepository.save(eventListener);
         userRepository.save(user);
 
-        /* test를 위해 잠시 메일은 중단
         String email = parameter.getUserEmail();
         String subject = "프리미엄 쇼핑몰 호두에 가입하신 것을 축하드립니다. ";
         String text = "<p>호두에 관심을 가져 주신 것에 감사드립니다.<p><p>아래 링크를 클릭하시고 이메일 인증을 완료해주세요./p>"
                 + "<div><a target='_blank' href='http://localhost:8080/user/email-auth?id=" + uuid + "'> 이메일 인증 </a></div>";
-        mailComponents.sendMail(email, subject, text);*/
+        mailComponents.sendMail(email, subject, text);
 
     }
 
@@ -169,6 +172,12 @@ public class UserService implements UserDetailsService {
             Address address = new Address(input.getZipCode(), input.getStreetAdr(), input.getDetailAdr());
             user.setAddress(address);
         }
+        userRepository.save(user);
+    }
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void userStatusUpdate(String userId, UserStatus userStatus) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFound::new);
+        user.setUserStatus(userStatus);
         userRepository.save(user);
     }
 }

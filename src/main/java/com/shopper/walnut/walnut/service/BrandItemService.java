@@ -14,6 +14,8 @@ import com.shopper.walnut.walnut.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +30,7 @@ public class BrandItemService {
      * 키로 brandItemId를 받아온다.
      */
     @Cacheable(key = "#parameter.brandItemId", value = CacheKey.ITEM_SCHEDULE)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void add(BrandItemInput parameter, Brand brand) {
         BrandItem brandItem = BrandItemInput.of(parameter);
         Item item = Item.of(brandItem);

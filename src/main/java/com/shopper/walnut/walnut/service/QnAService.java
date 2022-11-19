@@ -12,6 +12,7 @@ import com.shopper.walnut.walnut.repository.QnARepository;
 import com.shopper.walnut.walnut.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +45,7 @@ public class QnAService {
     /**
      * 메인 페이지에 띄울 qna만 반환
      **/
+    @Transactional(readOnly = true)
     public List<QnA> searchMain() {
         List<QnA> qnas = qnARepository.findAllByStatus(QnaStatus.MAIN);
         if (qnas.size() == 0 || qnas.isEmpty()) {
@@ -66,6 +68,7 @@ public class QnAService {
     /**
      * 타입 별 질문 리스트
      **/
+    @Transactional(readOnly = true)
     public List<QnA> typeMain(QnaType type) {
         List<QnA> list = qnARepository.findAllByType(type);
         if (list.size() == 0 || list.isEmpty()) {
@@ -77,6 +80,7 @@ public class QnAService {
     /**
      * 타입별 리스트
      **/
+    @Transactional(readOnly = true)
     public List<QnaType> getList() {
         List<QnaType> list = new ArrayList<>();
         Collections.addAll(list, QnaType.values());

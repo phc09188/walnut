@@ -2,6 +2,7 @@ package com.shopper.walnut.walnut.service;
 
 import com.shopper.walnut.walnut.exception.error.BrandNotFound;
 import com.shopper.walnut.walnut.exception.error.ItemNotFound;
+import com.shopper.walnut.walnut.exception.error.OrderNotFound;
 import com.shopper.walnut.walnut.exception.error.UserNotFound;
 import com.shopper.walnut.walnut.model.entity.*;
 import com.shopper.walnut.walnut.model.input.OrderInput;
@@ -9,6 +10,8 @@ import com.shopper.walnut.walnut.model.status.DeliveryStatus;
 import com.shopper.walnut.walnut.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +28,7 @@ public class OrderService {
     /**
      * 주문 + 장바구니 편집
      **/
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Long order(String userId, Long itemId, Long count, Long point, Long payAmount) {
 
         User member = userRepository.findById(userId).orElseThrow(UserNotFound::new);
@@ -52,8 +56,12 @@ public class OrderService {
     /**
      * 주문취소
      **/
-    public void cancelOrder(Order order) {
-        orderRepository.delete(order);
+    public void cancelOrder(Long orderId) {
+        Optional<Order> optional = orderRepository.findById(orderId);
+        if(optional.isEmpty()){
+            throw new OrderNotFound();
+        }
+        orderRepository.delete(optional.get());
     }
 
     /**

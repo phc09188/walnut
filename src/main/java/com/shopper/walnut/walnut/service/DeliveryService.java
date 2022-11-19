@@ -21,7 +21,5 @@ public class DeliveryService {
             return DeliveryStatus.CANCEL;
         }
     }
-
-
 }
 

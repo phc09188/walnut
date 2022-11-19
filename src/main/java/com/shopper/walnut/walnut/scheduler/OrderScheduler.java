@@ -18,7 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderScheduler {
     private final OrderRepository orderRepository;
-
     /**
      * 매일 자정
      * 배송 완료가 7일이 지난 주문 정보들은 삭제한다.
